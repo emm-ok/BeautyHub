@@ -1,0 +1,23 @@
+import dotenv from "dotenv"
+dotenv.config();
+
+export const env = {
+   PORT: process.env.PORT! || 5000,
+    NODE_ENV: process.env.NODE_ENV! || 'development',
+
+    DATABASE_URL: process.env.DATABASE_URL!, 
+
+    CLIENT_URL: process.env.CLIENT_URL!,
+    ADMIN_URL: process.env.ADMIN_URL!,
+
+    CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY!,
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY!,
+    CLERK_WEBHOOK_SIGNING_SECRET: process.env.CLERK_WEBHOOK_SIGNING_SECRET!,
+}
+
+
+Object.entries(env).forEach(([key, value]) => {
+    if (!value) {
+        console.log("Missing environment variable", key)
+    }
+})
