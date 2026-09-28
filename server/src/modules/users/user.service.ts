@@ -53,29 +53,6 @@ export async function ensureUserExists(
         update: {
             email: primaryEmail,
             name,
-            deletedAt: null,
-        },
-
-        include: {
-            memberships: {
-                where: {
-                    status: "ACTIVE",
-                },
-
-                include: {
-                    company: true,
-
-                    role: {
-                        include: {
-                            permissions: {
-                                include: {
-                                    permission: true,
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        },
+        }
     });
 }
