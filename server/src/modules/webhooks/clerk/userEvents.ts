@@ -31,7 +31,7 @@ export async function handleUserCreated(event: WebhookEvent) {
   }
 
   const email = getPrimaryEmail(
-    user.email_addresses,
+    user.email_addresses, 
     user.primary_email_address_id
   );
 

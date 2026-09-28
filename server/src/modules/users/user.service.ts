@@ -53,6 +53,7 @@ export async function ensureUserExists(
         update: {
             email: primaryEmail,
             name,
-        }
+            deletedAt: null,
+        },
     });
 }
