@@ -13,8 +13,7 @@ const optionalString = z
   .optional()
   .nullable();
 
-export const createProductSchema = z
-  .object({
+const productFields = {
     name: z
       .string()
       .trim()
@@ -83,63 +82,84 @@ export const createProductSchema = z
     size: optionalString,
 
     unit: optionalString,
-  })
-  .superRefine((data, ctx) => {
-    if (data.discountType === DiscountType.NONE) {
-      if (
-        data.discountValue !== null &&
-        data.discountValue !== undefined
-      ) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["discountValue"],
-          message:
-            "Discount value must be empty when discount type is NONE.",
-        });
-      }
+  };
 
-      return;
-    }
 
+const validateDiscount = (
+  data: {
+    price?: number | undefined;
+    discountType?: DiscountType | undefined;
+    discountValue?: number | null | undefined;
+  },
+  ctx: z.RefinementCtx
+) => {
+  if (!data.discountType) {
+    return;
+  }
+
+  if (data.discountType === DiscountType.NONE) {
     if (
-      data.discountValue === null ||
-      data.discountValue === undefined
+      data.discountValue !== null &&
+      data.discountValue !== undefined
     ) {
       ctx.addIssue({
         code: "custom",
         path: ["discountValue"],
         message:
-          "Discount value is required when a discount is applied.",
-      });
-
-      return;
-    }
-
-    if (
-      data.discountType === DiscountType.PERCENTAGE &&
-      data.discountValue > 100
-    ) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["discountValue"],
-        message: "Percentage discount cannot exceed 100%.",
+          "Discount value must be empty when discount type is NONE.",
       });
     }
 
-    if (
-      data.discountType === DiscountType.FIXED_AMOUNT &&
-      data.discountValue >= data.price
-    ) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["discountValue"],
-        message:
-          "Fixed discount must be less than the product price.",
-      });
-    }
-  });
+    return;
+  }
 
-export const updateProductSchema = createProductSchema.partial();
+  if (
+    data.discountValue === null ||
+    data.discountValue === undefined
+  ) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["discountValue"],
+      message:
+        "Discount value is required when a discount is applied.",
+    });
+
+    return;
+  }
+
+  if (
+    data.discountType === DiscountType.PERCENTAGE &&
+    data.discountValue > 100
+  ) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["discountValue"],
+      message: "Percentage discount cannot exceed 100%.",
+    });
+  }
+
+  if (
+    data.discountType === DiscountType.FIXED_AMOUNT &&
+    data.price !== undefined &&
+    data.discountValue >= data.price
+  ) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["discountValue"],
+      message:
+        "Fixed discount must be less than the product price.",
+    });
+  }
+};
+
+export const createProductSchema = z
+  .object(productFields)
+  .superRefine(validateDiscount);
+
+export const updateProductSchema = z
+  .object(productFields)
+  .partial()
+  .superRefine(validateDiscount);
 
 export const productQuerySchema = z.object({
   search: z

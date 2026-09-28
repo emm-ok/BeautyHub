@@ -27,17 +27,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(clerkMiddleware())
 
 app.use("/api/users", userRoutes);
-app.use("/api/product-discovery", productDiscoveryRoutes);
+app.use("/api/products/discover", productDiscoveryRoutes);
 app.use("/api/products", productRoutes);
 
-// app.get("/users", async(req, res) => {
-//     const users = await prisma.user.findMany();
-//     res.status(200).json({ 
-//         success: true,
-//         message: "Users endpoint",
-//         data: users
-//     });
-// })
+app.get("/users", async(req, res) => {
+    const users = await prisma.user.findMany();
+    res.status(200).json({ 
+        success: true,
+        message: "Users endpoint",
+        data: users
+    });
+})
 
 // app.get("/", (req, res) => {
 //     res.status(200).json({ message: "Server is running successfully" });

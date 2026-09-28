@@ -61,6 +61,13 @@ export default function Navbar() {
           </Link>
 
           <Link
+            href="/discover"
+            className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-950"
+          >
+            Find What I need
+          </Link>
+
+          <Link
             href="#about"
             className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-950"
           >
