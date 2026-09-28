@@ -164,11 +164,7 @@ export default function AuthPage() {
                   },
                   variables: {
                     colorPrimary: "#171717",
-                    colorText: "#171717",
-                    colorTextSecondary: "#737373",
                     colorBackground: "#faf9f7",
-                    colorInputBackground: "#ffffff",
-                    colorInputText: "#171717",
                     borderRadius: "0.75rem",
                     fontFamily:
                       "Inter, ui-sans-serif, system-ui, sans-serif",
