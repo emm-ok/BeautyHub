@@ -1,0 +1,196 @@
+import type { Request, Response } from "express";
+import { ZodError } from "zod";
+
+import {
+  createProductSchema,
+  productQuerySchema,
+  updateProductSchema,
+} from "./product.schema.js";
+
+import {
+  createProduct,
+  deleteProduct,
+  getProductById,
+  getProducts,
+  updateProduct,
+} from "./product.service.js";
+
+export async function createProductController(
+  req: Request,
+  res: Response
+) {
+  try {
+    const data = createProductSchema.parse(
+      req.body
+    );
+
+    const product = await createProduct(data);
+
+    return res.status(201).json({
+      success: true,
+      data: product,
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed.",
+        errors: error.flatten(),
+      });
+    }
+
+    return res.status(400).json({
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Unable to create product.",
+    });
+  }
+}
+
+
+
+export async function getProductsController(
+  req: Request,
+  res: Response
+) {
+  try {
+    const filters =
+      productQuerySchema.parse(req.query);
+
+    const result = await getProducts(filters);
+
+    return res.status(200).json({
+      success: true,
+      data: result.products,
+      pagination: result.pagination,
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid query parameters.",
+        errors: error.flatten(),
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to fetch products.",
+    });
+  }
+}
+
+
+
+export async function getProductController(
+  req: Request,
+  res: Response
+) {
+  try {
+    const product = await getProductById(
+      req.params.id as string
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: product,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Unable to fetch product.";
+
+    const status =
+      message === "Product not found."
+        ? 404
+        : 500;
+
+    return res.status(status).json({
+      success: false,
+      message,
+    });
+  }
+}
+
+
+
+export async function updateProductController(
+  req: Request,
+  res: Response
+) {
+  try {
+    const data =
+      updateProductSchema.parse(req.body);
+
+    const product = await updateProduct(
+      req.params.id as string,
+      data
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: product,
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed.",
+        errors: error.flatten(),
+      });
+    }
+
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Unable to update product.";
+
+    const status =
+      message === "Product not found."
+        ? 404
+        : 400;
+
+    return res.status(status).json({
+      success: false,
+      message,
+    });
+  }
+}
+
+
+
+export async function deleteProductController(
+  req: Request,
+  res: Response
+) {
+  try {
+    const result = await deleteProduct(
+      req.params.id as string
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Unable to delete product.";
+
+    const status =
+      message === "Product not found."
+        ? 404
+        : message.includes("referenced")
+          ? 409
+          : 500;
+
+    return res.status(status).json({
+      success: false,
+      message,
+    });
+  }
+}

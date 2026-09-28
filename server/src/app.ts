@@ -1,12 +1,15 @@
 import express from "express";
 import type { Application } from "express";
 import cors from "cors";
+import { clerkMiddleware } from "@clerk/express";
+
 import { env } from "./config/env.js";
 import { prisma } from "./lib/prisma.js";
 
 import webhookRoutes from "./routes/webhook.routes.js";
 import userRoutes from "./routes/user.routes.js";
-import { clerkMiddleware } from "@clerk/express";
+import productDiscoveryRoutes from "./modules/product-discovery/product-discovery.route.js";
+import productRoutes from "./modules/product/product.route.js";
 
 const app: Application = express();
 
@@ -24,6 +27,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(clerkMiddleware())
 
 app.use("/api/users", userRoutes);
+app.use("/api/product-discovery", productDiscoveryRoutes);
+app.use("/api/products", productRoutes);
 
 // app.get("/users", async(req, res) => {
 //     const users = await prisma.user.findMany();

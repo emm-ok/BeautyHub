@@ -50,11 +50,11 @@ enum SkinType {
 }
 
 enum ProductConcern {
-  ACNE
+  ACNE_PRONE
   DARK_SPOTS
   UNEVEN_SKIN_TONE
   DRYNESS
-  OILINESS
+  OILY_SKIN
   SENSITIVE_SKIN
   ROUGH_SKIN
   BUMPY_SKIN
@@ -62,6 +62,15 @@ enum ProductConcern {
   ANTI_AGING
   GENERAL_SKINCARE
   GENERAL_BODY_CARE
+}
+
+enum ProductCategory {
+  CLEANSER
+  SERUM
+  MOISTURISER
+  SUNSCREEN
+  TONER
+  BODY_CARE
 }
 
 enum OrderStatus {
@@ -117,24 +126,23 @@ enum AddressType {
 
 // USER
 model User {
-  id        String     @id @default(uuid())
-  clerkId   String     @unique
+  id      String @id @default(uuid())
+  clerkId String @unique
 
-  email     String     @unique
-  name String?
-  
-  phone     String?
-  role      UserRole   @default(CUSTOMER)
-  status    UserStatus @default(ACTIVE)
+  email String  @unique
+  name  String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  phone  String?
+  role   UserRole   @default(CUSTOMER)
+  status UserStatus @default(ACTIVE)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-
-  cart                Cart?
-  orders              Order[]
-  addresses           CustomerAddress[]
+  cart                  Cart?
+  orders                Order[]
+  addresses             CustomerAddress[]
   whatsappNotifications WhatsAppNotification[]
 
   @@index([role])
@@ -149,10 +157,10 @@ model CustomerAddress {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  type       AddressType @default(HOME)
-  label      String?
+  type          AddressType @default(HOME)
+  label         String?
   recipientName String
-  phone      String
+  phone         String
 
   addressLine1 String
   addressLine2 String?
@@ -196,8 +204,8 @@ model DeliveryRegion {
 model Category {
   id String @id @default(uuid())
 
-  name        String
-  slug        String       @unique
+  name        ProductCategory
+  slug        String          @unique
   description String?
   imageUrl    String?
 
@@ -212,12 +220,11 @@ model Category {
   @@map("categories")
 }
 
-
 model Product {
   id String @id @default(uuid())
 
   name        String
-  slug        String       @unique
+  slug        String @unique
   description String
 
   brand String?
@@ -226,21 +233,22 @@ model Product {
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
   // Pricing
-  
-  price Decimal @db.Decimal(12, 2)
+
+  price     Decimal @db.Decimal(12, 2)
+  salePrice Decimal @db.Decimal(12, 2)
 
   discountType DiscountType @default(NONE)
 
   discountValue Decimal? @db.Decimal(12, 2)
 
   // Inventory
-  
+
   stockQuantity Int @default(0)
 
   lowStockThreshold Int @default(5)
 
   // Product status
-  
+
   status ProductStatus @default(ACTIVE)
 
   // Admin manually controls this.
@@ -248,7 +256,7 @@ model Product {
   verificationStatus ProductVerificationStatus @default(NOT_VERIFIED)
 
   // Product education / discovery data
-  
+
   howToUse String?
 
   keyIngredients String?
@@ -264,21 +272,22 @@ model Product {
   concerns ProductConcern[]
 
   // Product metadata
-  
+
   size String?
   unit String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  images      ProductImage[]
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
+  images     ProductImage[]
+  cartItems  CartItem[]
+  orderItems OrderItem[]
 
   @@index([categoryId])
   @@index([status])
   @@index([verificationStatus])
   @@index([price])
+  @@index([salePrice])
   @@map("products")
 }
 
@@ -290,15 +299,20 @@ model ProductImage {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   url       String
-  altText   String?
+  public_id String
+
+  altText String?
 
   sortOrder Int @default(0)
 
   isPrimary Boolean @default(false)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([productId])
+  @@index([productId, sortOrder])
+  @@index([productId, isPrimary])
   @@map("product_images")
 }
 
@@ -316,7 +330,6 @@ model Cart {
 
   @@map("carts")
 }
-
 
 model CartItem {
   id String @id @default(uuid())
@@ -349,7 +362,7 @@ model Order {
   user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   // Financial snapshot
-  
+
   subtotal Decimal @db.Decimal(12, 2)
 
   deliveryFee Decimal @db.Decimal(12, 2)
@@ -361,34 +374,34 @@ model Order {
   currency String @default("NGN")
 
   // Order state
-  
+
   status OrderStatus @default(PENDING_PAYMENT)
 
   // Contact snapshot
-  
-  customerName String
+
+  customerName  String
   customerEmail String
   customerPhone String
 
   whatsappPhone String?
 
   // Delivery
-  
+
   deliveryId String?
 
   // Timestamps
-  
-  paidAt      DateTime?
-  processedAt DateTime?
+
+  paidAt       DateTime?
+  processedAt  DateTime?
   dispatchedAt DateTime?
-  deliveredAt DateTime?
-  cancelledAt DateTime?
+  deliveredAt  DateTime?
+  cancelledAt  DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
-  
+
   items OrderItem[]
 
   payments Payment[]
@@ -481,7 +494,7 @@ model Delivery {
   id String @id @default(uuid())
 
   orderId String @unique
-  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   regionId String
   region   DeliveryRegion @relation(fields: [regionId], references: [id], onDelete: Restrict)
@@ -489,7 +502,7 @@ model Delivery {
   status DeliveryStatus @default(PENDING)
 
   // Delivery address snapshot
-  
+
   recipientName String
   phone         String
 
@@ -501,7 +514,7 @@ model Delivery {
   city  String
 
   // Tracking
-  
+
   trackingReference String?
 
   estimatedDeliveryDate DateTime?
@@ -545,10 +558,10 @@ model WhatsAppNotification {
   id String @id @default(uuid())
 
   userId String
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   orderId String
-  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   type WhatsAppNotificationType
 
