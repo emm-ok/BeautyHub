@@ -16,7 +16,7 @@ const categories = [
     title: "Cleansers",
     description: "Start with a clean foundation.",
     icon: Droplets,
-    href: "/products?category=cleansers",
+    href: "/products?category=CLEANSER",
     size: "large",
     image:
       "/assets/category/beautyhub-catg-img1.jpg",
@@ -25,7 +25,7 @@ const categories = [
     title: "Serums",
     description: "Targeted care for specific concerns.",
     icon: FlaskConical,
-    href: "/products?category=serums",
+    href: "/products?category=SERUM",
     size: "small",
     image:
       "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=1200&q=85",
@@ -34,7 +34,7 @@ const categories = [
     title: "Moisturisers",
     description: "Keep your skin balanced and hydrated.",
     icon: Heart,
-    href: "/products?category=moisturisers",
+    href: "/products?category=MOISTURISER",
     size: "small",
     image:
       "https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?auto=format&fit=crop&w=1200&q=85",
@@ -43,7 +43,7 @@ const categories = [
     title: "Body Care",
     description: "Care beyond your face.",
     icon: Layers3,
-    href: "/products?category=body-care",
+    href: "/products?category=BODY_CARE",
     size: "large",
     image:
       "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1200&q=85",

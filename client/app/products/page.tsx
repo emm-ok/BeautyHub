@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import ProductsShell from "@/components/products/ProductsShell";
 
 export const metadata = {
@@ -8,5 +8,9 @@ export const metadata = {
 };
 
 export default function ProductsPage() {
-  return <ProductsShell />;
+  return (
+    <Suspense>
+      <ProductsShell />
+    </Suspense>
+  )
 }
