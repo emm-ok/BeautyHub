@@ -161,14 +161,14 @@ export async function getProducts(
     where.salePrice = {
       ...(minPrice !== undefined
         ? {
-            gte: minPrice,
-          }
+          gte: minPrice,
+        }
         : {}),
 
       ...(maxPrice !== undefined
         ? {
-            lte: maxPrice,
-          }
+          lte: maxPrice,
+        }
         : {}),
     };
   }
@@ -209,9 +209,14 @@ export async function getProducts(
             altText: true,
           },
 
-          orderBy: {
-            createdAt: "asc",
-          },
+          orderBy: [
+            {
+              isPrimary: "desc",
+            },
+            {
+              sortOrder: "asc",
+            },
+          ],
 
           take: 1,
         },
@@ -267,9 +272,14 @@ export async function getProductById(
           altText: true,
         },
 
-        orderBy: {
-          createdAt: "asc",
-        },
+        orderBy: [
+          {
+            isPrimary: "desc",
+          },
+          {
+            sortOrder: "asc",
+          },
+        ],
       },
     },
   });

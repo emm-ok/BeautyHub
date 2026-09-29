@@ -36,7 +36,7 @@ export default function DiscoveryProductCard({
       transition={{ duration: 0.25 }}
       className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white"
     >
-      <Link href={`/products/${product.slug}`}>
+      <Link href={`/products/${product.id}`}>
         <div className="relative aspect-square overflow-hidden bg-neutral-100">
           {primaryImage ? (
             <Image

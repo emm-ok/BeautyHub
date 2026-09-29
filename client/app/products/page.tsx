@@ -1,9 +1,12 @@
 import React from 'react'
+import ProductsShell from "@/components/products/ProductsShell";
 
-const ProductsPage = () => {
-  return (
-    <div>ProductsPage</div>
-  )
+export const metadata = {
+  title: "Shop Beauty & Personal Care | BeautyHub",
+  description:
+    "Explore verified skincare and beauty products at BeautyHub Store.",
+};
+
+export default function ProductsPage() {
+  return <ProductsShell />;
 }
-
-export default ProductsPage
