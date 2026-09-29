@@ -1,5 +1,3 @@
-// server/src/middleware/require-authentication.ts
-
 import type {
   Request,
   Response,

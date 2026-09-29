@@ -1,13 +1,11 @@
 import type { Request, Response } from "express";
-import { getAuth } from "@clerk/express";
-import { prisma } from "../../lib/prisma.js";
 import { ensureUserExists } from "./user.service.js";
 
 export async function getUserByClerkId(
     req: Request, res: Response
 ) {
     try {
-        const userId = req.user?.id;
+        const userId = req.user?.clerkId;
 
         if (!userId) {
             return res.status(400).json({
@@ -21,7 +19,7 @@ export async function getUserByClerkId(
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: "ResolveHub user not found",
+                message: "User not found",
             });
         }
 
