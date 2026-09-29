@@ -1,11 +1,18 @@
-import type { Request, Response, NextFunction } from "express";
+// server/src/middleware/require-authentication.ts
+
+import type {
+  Request,
+  Response,
+  NextFunction,
+} from "express";
+
 import { getAuth } from "@clerk/express";
 
 declare global {
   namespace Express {
     interface Request {
       user?: {
-        id: string;
+        clerkId: string;
       };
     }
   }
@@ -16,18 +23,29 @@ export function requireAuthentication(
   res: Response,
   next: NextFunction
 ) {
-  const { isAuthenticated, userId } = getAuth(req);
+  try {
+    const auth = getAuth(req);
 
-  if (!isAuthenticated || !userId) {
+    if (!auth.isAuthenticated || !auth.userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required.",
+      });
+    }
+
+    req.user = {
+      clerkId: auth.userId,
+    };
+
+    return next();
+  } catch (error) {
+    console.error("Authentication middleware error:", error);
+
     return res.status(401).json({
       success: false,
-      message: "Authentication required",
+      message: "Authentication required.",
     });
   }
-
-  req.user = { id: userId };
-
-  next();
 }
 
 export {};

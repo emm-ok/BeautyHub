@@ -5,6 +5,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { clerkAppearance } from "@/config/clerk";
 import Providers from "./providers";
 import Navbar from "@/components/landing/Navbar";
+import { CartProvider } from "@/components/layout/CartProvider";
+import CartDrawer from "@/components/cart/CartDrawer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,8 +31,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       >
         <body className="min-h-full flex flex-col">
-          <Navbar />
-          <Providers>{children}</Providers>
+          <Providers>
+            <CartProvider>
+              <Navbar />
+
+              {children}
+
+              <CartDrawer />
+            </CartProvider>
+          </Providers>
         </body>
       </html>
     </ClerkProvider>

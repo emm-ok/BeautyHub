@@ -128,7 +128,7 @@ export default function Hero() {
             {/* Main image container */}
             <div className="relative aspect-[0.88] overflow-hidden rounded-[2rem] border border-neutral-200 bg-neutral-100 shadow-[0_30px_80px_rgba(0,0,0,0.08)]">
               <Image
-                src="/assets/hero/beautyhub-hero.webp"
+                src="/assets/category/beautyhub-catg-img1.jpg"
                 alt="Curated skincare products from BeautyHub"
                 fill
                 priority
@@ -140,7 +140,7 @@ export default function Hero() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
               {/* Bottom image caption */}
-              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+              <div className="absolute inset-x-0 bottom-10 p-5 sm:p-6">
                 <div className="rounded-2xl border border-white/30 bg-white/90 p-4 shadow-lg backdrop-blur-xl">
                   <div className="flex items-end justify-between gap-4">
                     <div>
