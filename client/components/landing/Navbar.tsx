@@ -33,8 +33,8 @@ import { toast } from "sonner";
 
 const navigation = [
   {
-    label: "Discover",
-    href: "#discover",
+    label: "Featured",
+    href: "#featured-products",
   },
   {
     label: "Categories",
@@ -51,10 +51,6 @@ const navigation = [
   {
     label: "Find What I Need",
     href: "/discover",
-  },
-  {
-    label: "About",
-    href: "#about",
   },
 ];
 
