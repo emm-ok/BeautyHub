@@ -8,7 +8,6 @@ import {
 import {
   AlertCircle,
   ArrowLeft,
-  Loader2,
   ShoppingBag,
   X,
 } from "lucide-react";
@@ -33,7 +32,6 @@ export default function CartDrawer() {
   const {
     data: cart,
     isLoading,
-    isFetching,
     isError,
     refetch,
   } = useCart();
@@ -43,6 +41,7 @@ export default function CartDrawer() {
       {isCartOpen && (
         <>
           {/* Overlay */}
+
           <motion.button
             type="button"
             aria-label="Close cart"
@@ -60,6 +59,7 @@ export default function CartDrawer() {
           />
 
           {/* Drawer */}
+
           <motion.aside
             role="dialog"
             aria-modal="true"
@@ -82,6 +82,7 @@ export default function CartDrawer() {
             className="fixed inset-y-0 right-0 z-[90] flex w-full max-w-md flex-col border-l border-neutral-200 bg-white shadow-2xl"
           >
             {/* Header */}
+
             <div className="flex h-20 shrink-0 items-center justify-between border-b border-neutral-100 px-5 sm:px-6">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-950 text-white">
@@ -93,8 +94,12 @@ export default function CartDrawer() {
                     Your cart
                   </h2>
 
-                  <p className="text-xs text-neutral-400">
-                    {cart?.summary.totalItems ??
+                  <p
+                    className="text-xs text-neutral-400"
+                    aria-live="polite"
+                  >
+                    {cart?.summary
+                      .totalItems ??
                       0}{" "}
                     {cart?.summary
                       .totalItems === 1
@@ -104,24 +109,18 @@ export default function CartDrawer() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-1">
-                {isFetching &&
-                  !isLoading && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin text-neutral-400" />
-                  )}
-
-                <button
-                  type="button"
-                  onClick={closeCart}
-                  aria-label="Close cart"
-                  className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-950"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={closeCart}
+                aria-label="Close cart"
+                className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-950"
+              >
+                <X className="h-5 w-5" />
+              </button>
             </div>
 
             {/* Content */}
+
             <div className="flex min-h-0 flex-1 flex-col">
               {isLoading ? (
                 <CartLoading />
@@ -136,8 +135,9 @@ export default function CartDrawer() {
                   </h3>
 
                   <p className="mt-2 max-w-xs text-sm leading-6 text-neutral-500">
-                    Please try again. Your cart
-                    items are still safe.
+                    Please try again.
+                    Your cart items
+                    are still safe.
                   </p>
 
                   <button
@@ -151,11 +151,13 @@ export default function CartDrawer() {
                   </button>
                 </div>
               ) : !cart ||
-                cart.items.length === 0 ? (
+                cart.items.length ===
+                  0 ? (
                 <CartEmptyState />
               ) : (
                 <>
                   {/* Continue shopping */}
+
                   <div className="shrink-0 border-b border-neutral-100 px-5 py-3 sm:px-6">
                     <button
                       type="button"
@@ -163,11 +165,13 @@ export default function CartDrawer() {
                       className="flex items-center gap-2 text-xs font-medium text-neutral-500 transition hover:text-neutral-950"
                     >
                       <ArrowLeft className="h-3.5 w-3.5" />
+
                       Continue shopping
                     </button>
                   </div>
 
                   {/* Items */}
+
                   <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
                     <div className="space-y-5">
                       <AnimatePresence
@@ -177,7 +181,9 @@ export default function CartDrawer() {
                         {cart.items.map(
                           (item) => (
                             <CartItem
-                              key={item.id}
+                              key={
+                                item.id
+                              }
                               item={item}
                             />
                           )
@@ -187,6 +193,7 @@ export default function CartDrawer() {
                   </div>
 
                   {/* Summary */}
+
                   <div className="shrink-0">
                     <CartSummary
                       summary={

@@ -4,14 +4,16 @@ import { useMemo, useState } from "react";
 
 import {
   Check,
-  Loader2,
   Minus,
   Plus,
   ShoppingBag,
   ShieldCheck,
 } from "lucide-react";
 
-import { AnimatePresence, motion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+} from "framer-motion";
 
 import {
   SignInButton,
@@ -22,6 +24,7 @@ import { Product } from "@/types/products";
 
 import {
   useAddCartItem,
+  useCart,
 } from "@/hooks/useCart";
 
 import {
@@ -65,24 +68,48 @@ function getDiscountPercentage(
 
   return Math.round(
     ((price - salePrice) / price) *
-      100
+    100
   );
 }
 
 export default function ProductPurchasePanel({
   product,
 }: ProductPurchasePanelProps) {
-  const { isSignedIn, isLoaded } =
-    useUser();
+  const {
+    isSignedIn,
+    isLoaded,
+  } = useUser();
 
-  const { openCart } =
-    useCartDrawer();
+  const {
+    openCart,
+  } = useCartDrawer();
+
+  const {
+    data: cart,
+  } = useCart();
 
   const addCartMutation =
     useAddCartItem();
 
-  const [quantity, setQuantity] =
-    useState(1);
+  const [
+    quantity,
+    setQuantity,
+  ] = useState(1);
+
+  /**
+   * This is intentionally local UI state.
+   *
+   * It is not the cart itself.
+   * The cart remains owned by TanStack Query.
+   *
+   * This state simply communicates the immediate
+   * result of the user's click while the mutation
+   * is being reconciled.
+   */
+  const [
+    recentlyAdded,
+    setRecentlyAdded,
+  ] = useState(false);
 
   const discount = useMemo(
     () =>
@@ -101,6 +128,14 @@ export default function ProductPurchasePanel({
     1
   );
 
+  const cartItem = cart?.items.find(
+    (item) =>
+      item.product.id === product.id
+  );
+
+  const isAlreadyInCart =
+    Boolean(cartItem);
+
   const decreaseQuantity = () => {
     setQuantity((current) =>
       Math.max(current - 1, 1)
@@ -117,13 +152,16 @@ export default function ProductPurchasePanel({
   };
 
   const handleAddToCart = () => {
-    if (!isInStock) {
+    if (!isInStock || !isSignedIn) {
       return;
     }
 
-    if (!isSignedIn) {
-      return;
-    }
+    /**
+     * Optimistic visual feedback.
+     *
+     * This happens before the API response.
+     */
+    setRecentlyAdded(true);
 
     addCartMutation.mutate(
       {
@@ -133,24 +171,30 @@ export default function ProductPurchasePanel({
       {
         onSuccess: () => {
           setQuantity(1);
+
+          window.setTimeout(() => {
+            setRecentlyAdded(false);
+          }, 500);
+
           openCart();
+        },
+
+        onError: () => {
+          setRecentlyAdded(false);
         },
       }
     );
   };
 
-  const isAdding =
-    addCartMutation.isPending;
-
   const errorMessage =
-    addCartMutation.error instanceof
-    Error
+    addCartMutation.error instanceof Error
       ? addCartMutation.error.message
       : null;
 
   return (
     <div className="rounded-[2rem] border border-neutral-200 bg-white p-6 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.25)] sm:p-8">
       {/* Price */}
+
       <div>
         <div className="flex flex-wrap items-center gap-3">
           <span className="text-3xl font-semibold tracking-tight text-neutral-950">
@@ -184,6 +228,7 @@ export default function ProductPurchasePanel({
       </div>
 
       {/* Stock */}
+
       <div className="mt-6 flex items-center gap-2">
         <span
           className={[
@@ -206,6 +251,7 @@ export default function ProductPurchasePanel({
       </div>
 
       {/* Quantity */}
+
       {isInStock && (
         <div className="mt-7">
           <p className="mb-3 text-sm font-medium text-neutral-900">
@@ -219,8 +265,7 @@ export default function ProductPurchasePanel({
                 decreaseQuantity
               }
               disabled={
-                quantity === 1 ||
-                isAdding
+                quantity === 1
               }
               className="flex h-11 w-11 items-center justify-center text-neutral-600 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-30"
               aria-label="Decrease quantity"
@@ -239,8 +284,7 @@ export default function ProductPurchasePanel({
               }
               disabled={
                 quantity >=
-                  maxQuantity ||
-                isAdding
+                maxQuantity
               }
               className="flex h-11 w-11 items-center justify-center text-neutral-600 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-30"
               aria-label="Increase quantity"
@@ -252,6 +296,7 @@ export default function ProductPurchasePanel({
       )}
 
       {/* API error */}
+
       <AnimatePresence>
         {errorMessage && (
           <motion.div
@@ -277,6 +322,7 @@ export default function ProductPurchasePanel({
       </AnimatePresence>
 
       {/* Add to cart */}
+
       {isLoaded && isSignedIn ? (
         <motion.button
           type="button"
@@ -284,34 +330,74 @@ export default function ProductPurchasePanel({
             handleAddToCart
           }
           whileHover={
-            isInStock && !isAdding
+            isInStock
               ? { y: -1 }
               : undefined
           }
           whileTap={
-            isInStock && !isAdding
+            isInStock
               ? { scale: 0.99 }
               : undefined
           }
-          disabled={
-            !isInStock ||
-            isAdding
-          }
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-neutral-950 px-5 py-4 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-500"
+          disabled={!isInStock}
+          className={[
+            "mt-6 flex w-full items-center justify-center gap-2 rounded-xl px-5 py-4 text-sm font-semibold transition",
+            isInStock
+              ? "bg-neutral-950 text-white hover:bg-neutral-800"
+              : "cursor-not-allowed bg-neutral-200 text-neutral-500",
+          ].join(" ")}
         >
-          {isAdding ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Adding to cart...
-            </>
-          ) : (
-            <>
-              <ShoppingBag className="h-4 w-4" />
-              {isInStock
-                ? "Add to cart"
-                : "Out of stock"}
-            </>
-          )}
+          <AnimatePresence
+            mode="wait"
+            initial={false}
+          >
+            {recentlyAdded ? (
+              <motion.span
+                key="added"
+                initial={{
+                  opacity: 0,
+                  y: 4,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  y: -4,
+                }}
+                className="flex items-center gap-2"
+              >
+                <Check className="h-4 w-4" />
+                Added to cart
+              </motion.span>
+            ) : (
+              <motion.span
+                key="add"
+                initial={{
+                  opacity: 0,
+                  y: 4,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  y: -4,
+                }}
+                className="flex items-center gap-2"
+              >
+                <ShoppingBag className="h-4 w-4" />
+
+                {isInStock
+                  ? isAlreadyInCart
+                    ? "Add more to cart"
+                    : recentlyAdded ? "Added to cart" : "Add to cart"
+                  : "Out of stock"}
+              </motion.span>
+            )}
+          </AnimatePresence>
         </motion.button>
       ) : (
         <SignInButton mode="modal">
@@ -340,6 +426,7 @@ export default function ProductPurchasePanel({
       )}
 
       {/* Trust */}
+
       <div className="mt-6 grid gap-3 border-t border-neutral-100 pt-6">
         <div className="flex items-center gap-3">
           <ShieldCheck className="h-4 w-4 text-neutral-500" />

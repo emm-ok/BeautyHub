@@ -117,8 +117,9 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   };
 
-  const cartCount =
-    cart?.summary.totalItems ?? 0;
+  const cartCount = isSignedIn
+    ? cart?.summary.totalItems ?? 0
+    : 0;
 
   const handleCartClick = () => {
     closeMobileMenu();
@@ -203,9 +204,7 @@ export default function Navbar() {
             {/* Cart */}
             <motion.button
               type="button"
-              onClick={
-                handleCartClick
-              }
+              onClick={handleCartClick}
               aria-label={
                 cartCount > 0
                   ? `Shopping cart with ${cartCount} items`
