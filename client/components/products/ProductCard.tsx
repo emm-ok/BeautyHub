@@ -30,6 +30,16 @@ export default function ProductCard({
     Number(product.salePrice) <
     Number(product.price);
 
+  const hasSize =
+    "size" in product &&
+    typeof product.size !== "undefined" &&
+    product.size !== null;
+
+  const hasUnit =
+    "unit" in product &&
+    typeof product.unit !== "undefined" &&
+    product.unit !== null;
+
   return (
     <motion.article
       initial={{
@@ -118,7 +128,7 @@ export default function ProductCard({
               "_",
               " "
             )}
-            {product.size
+            {hasSize
               ? ` · ${product.size}${product.unit ? ` ${product.unit}` : ""}`
               : ""}
           </p>
