@@ -236,3 +236,17 @@ export type UpdateProductInput = z.infer<
 export type ProductQueryInput = z.infer<
   typeof productQuerySchema
 >;
+
+
+export const relatedProductsParamsSchema = z.object({
+  id: z.string().uuid(),
+});
+
+export const relatedProductsQuerySchema = z.object({
+  limit: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(12)
+    .default(6),
+});

@@ -5,6 +5,8 @@ import {
   createProductSchema,
   productQuerySchema,
   updateProductSchema,
+  relatedProductsParamsSchema,
+  relatedProductsQuerySchema,
 } from "./product.schema.js";
 
 import {
@@ -13,6 +15,7 @@ import {
   getProductById,
   getProducts,
   updateProduct,
+  getRelatedProducts
 } from "./product.service.js";
 
 export async function createProductController(
@@ -191,6 +194,68 @@ export async function deleteProductController(
     return res.status(status).json({
       success: false,
       message,
+    });
+  }
+}
+
+
+
+
+export async function getRelatedProductsController(
+  req: Request,
+  res: Response,
+) {
+  const paramsResult =
+    relatedProductsParamsSchema.safeParse(req.params);
+
+  if (!paramsResult.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid product ID.",
+      errors: paramsResult.error.flatten(),
+    });
+  }
+
+  const queryResult =
+    relatedProductsQuerySchema.safeParse(req.query);
+
+  if (!queryResult.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid recommendation parameters.",
+      errors: queryResult.error.flatten(),
+    });
+  }
+
+  try {
+    const products = await getRelatedProducts(
+      paramsResult.data.id,
+      {
+        limit: queryResult.data.limit,
+      },
+    );
+
+    if (!products) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: products,
+    });
+  } catch (error) {
+    console.error(
+      "Get related products error:",
+      error,
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Unable to retrieve related products.",
     });
   }
 }

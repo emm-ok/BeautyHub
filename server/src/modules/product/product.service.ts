@@ -1,6 +1,8 @@
 import {
   Prisma,
   ProductStatus,
+  ProductVerificationStatus,
+  SkinType,
 } from "@prisma/client";
 
 import { prisma } from "../../lib/prisma.js";
@@ -504,4 +506,294 @@ export async function deleteProduct(
     id,
     message: "Product deleted successfully.",
   };
+}
+
+const DEFAULT_RECOMMENDATION_LIMIT = 6;
+const MAX_CANDIDATE_POOL = 30;
+
+type RelatedProductsOptions = {
+  limit?: number;
+};
+
+type RecommendationProduct = Prisma.ProductGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    slug: true;
+    brand: true;
+    price: true;
+    salePrice: true;
+    verificationStatus: true;
+    categoryId: true;
+    skinTypes: true;
+    concerns: true;
+    stockQuantity: true;
+    category: {
+      select: {
+        id: true;
+        name: true;
+      };
+    };
+    images: {
+      select: {
+        id: true;
+        url: true;
+        altText: true;
+        isPrimary: true;
+        sortOrder: true;
+      };
+    };
+  };
+}>;
+
+function getSharedValues<T>(
+  first: T[],
+  second: T[],
+): T[] {
+  return first.filter((value) => second.includes(value));
+}
+
+function calculateSkinTypeScore(
+  current: SkinType[],
+  candidate: SkinType[],
+): number {
+  if (
+    current.includes(SkinType.ALL) ||
+    candidate.includes(SkinType.ALL)
+  ) {
+    return 20;
+  }
+
+  return getSharedValues(current, candidate).length > 0
+    ? 20
+    : 0;
+}
+
+function calculatePriceScore(
+  currentPrice: Prisma.Decimal,
+  candidatePrice: Prisma.Decimal,
+): number {
+  const current = Number(currentPrice);
+  const candidate = Number(candidatePrice);
+
+  if (current <= 0 || candidate <= 0) {
+    return 0;
+  }
+
+  const difference =
+    Math.abs(candidate - current) / current;
+
+  if (difference <= 0.2) {
+    return 5;
+  }
+
+  if (difference <= 0.4) {
+    return 3;
+  }
+
+  if (difference <= 0.6) {
+    return 1;
+  }
+
+  return 0;
+}
+
+function calculateScore(
+  currentProduct: RecommendationProduct,
+  candidate: RecommendationProduct,
+): number {
+  let score = 0;
+
+  const sharedConcerns = getSharedValues(
+    currentProduct.concerns,
+    candidate.concerns,
+  );
+
+  score += sharedConcerns.length * 40;
+
+  if (
+    currentProduct.categoryId ===
+    candidate.categoryId
+  ) {
+    score += 25;
+  }
+
+  score += calculateSkinTypeScore(
+    currentProduct.skinTypes,
+    candidate.skinTypes,
+  );
+
+  if (
+    candidate.verificationStatus ===
+    ProductVerificationStatus.VERIFIED
+  ) {
+    score += 10;
+  }
+
+  if (candidate.stockQuantity > 0) {
+    score += 10;
+  }
+
+  score += calculatePriceScore(
+    currentProduct.salePrice,
+    candidate.salePrice,
+  );
+
+  return score;
+}
+
+export async function getRelatedProducts(
+  productId: string,
+  options: RelatedProductsOptions = {},
+) {
+  const limit = Math.min(
+    options.limit ?? DEFAULT_RECOMMENDATION_LIMIT,
+    12,
+  );
+
+  const currentProduct = await prisma.product.findUnique({
+    where: {
+      id: productId,
+    },
+
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      salePrice: true,
+      categoryId: true,
+      skinTypes: true,
+      concerns: true,
+
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+  if (!currentProduct) {
+    return null;
+  }
+
+  const candidates = await prisma.product.findMany({
+    where: {
+      id: {
+        not: productId,
+      },
+
+      status: "ACTIVE",
+
+      stockQuantity: {
+        gt: 0,
+      },
+
+      OR: [
+        {
+          categoryId: currentProduct.categoryId,
+        },
+
+        ...(currentProduct.concerns.length > 0
+          ? [
+              {
+                concerns: {
+                  hasSome: currentProduct.concerns,
+                },
+              },
+            ]
+          : []),
+
+        ...(currentProduct.skinTypes.length > 0
+          ? [
+              {
+                skinTypes: {
+                  hasSome: currentProduct.skinTypes,
+                },
+              },
+            ]
+          : []),
+      ],
+    },
+
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      brand: true,
+      price: true,
+      salePrice: true,
+      verificationStatus: true,
+      categoryId: true,
+      skinTypes: true,
+      concerns: true,
+      stockQuantity: true,
+
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+
+      images: {
+        select: {
+          id: true,
+          url: true,
+          altText: true,
+          isPrimary: true,
+          sortOrder: true,
+        },
+
+        orderBy: [
+          {
+            isPrimary: "desc",
+          },
+          {
+            sortOrder: "asc",
+          },
+        ],
+
+        take: 1,
+      },
+    },
+
+    take: MAX_CANDIDATE_POOL,
+  });
+
+  const rankedProducts = candidates
+    .map((candidate) => ({
+      candidate,
+      score: calculateScore(
+        currentProduct as RecommendationProduct,
+        candidate,
+      ),
+    }))
+    .sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+
+      const aVerified =
+        a.candidate.verificationStatus ===
+        ProductVerificationStatus.VERIFIED;
+
+      const bVerified =
+        b.candidate.verificationStatus ===
+        ProductVerificationStatus.VERIFIED;
+
+      if (aVerified !== bVerified) {
+        return Number(bVerified) - Number(aVerified);
+      }
+
+      return a.candidate.name.localeCompare(
+        b.candidate.name,
+      );
+    })
+    .slice(0, limit);
+
+  return rankedProducts.map(
+    ({ candidate }) => candidate,
+  );
 }

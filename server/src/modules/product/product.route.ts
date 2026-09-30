@@ -5,6 +5,7 @@ import {
   deleteProductController,
   getProductController,
   getProductsController,
+  getRelatedProductsController,
   updateProductController,
 } from "./product.controller.js";
 
@@ -30,6 +31,11 @@ router.post(
 router.get(
   "/",
   getProductsController
+);
+
+router.get(
+  "/:id/related",
+  getRelatedProductsController,
 );
 
 router.get(
