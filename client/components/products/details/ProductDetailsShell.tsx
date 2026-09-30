@@ -207,7 +207,7 @@ export default function ProductDetailsShell({
       {/* Related products */}
       <section className="bg-[#fafafa]">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-          <RelatedProducts />
+          <RelatedProducts productId={product.id} />
         </div>
       </section>
     </main>

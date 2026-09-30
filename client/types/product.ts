@@ -149,3 +149,38 @@ export interface ProductApiResponse {
   success: boolean;
   data: Product;
 }
+
+
+
+export interface RelatedProductCategory {
+  id: string;
+  name: string;
+}
+
+export interface RelatedProductImage {
+  id: string;
+  url: string;
+  altText: string | null;
+  isPrimary: boolean;
+}
+
+export interface RelatedProduct {
+  id: string;
+  name: string;
+  slug: string;
+  brand: string | null;
+
+  price: string;
+  salePrice: string;
+
+  verificationStatus: "VERIFIED" | "NOT_VERIFIED";
+
+  category: RelatedProductCategory;
+
+  images: RelatedProductImage[];
+}
+
+export interface RelatedProductsResponse {
+  success: boolean;
+  data: RelatedProduct[];
+}

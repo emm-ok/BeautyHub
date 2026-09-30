@@ -11,9 +11,10 @@ import {
 import { motion } from "framer-motion";
 
 import { Product } from "@/types/products";
+import { RelatedProduct } from "@/types/product";
 
 interface ProductCardProps {
-  product: Product;
+  product: Product | RelatedProduct;
 }
 
 function formatPrice(value: string | number) {

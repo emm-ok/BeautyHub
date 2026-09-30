@@ -1,6 +1,6 @@
 
 import api from "@/lib/api";
-import { Product, ProductApiResponse } from "@/types/product";
+import { Product, ProductApiResponse, RelatedProductsResponse } from "@/types/product";
 import {
   ProductFilters,
   ProductsApiResponse,
@@ -81,4 +81,20 @@ export async function getProductById(
     );
 
   return response.data.data;
+}
+
+export async function getRelatedProducts(
+  productId: string,
+  limit = 6,
+): Promise<RelatedProductsResponse> {
+  const response = await api.get<RelatedProductsResponse>(
+    `/products/${productId}/related`,
+    {
+      params: {
+        limit,
+      },
+    },
+  );
+
+  return response.data;
 }
