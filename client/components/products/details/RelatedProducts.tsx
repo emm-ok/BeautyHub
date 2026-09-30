@@ -7,9 +7,8 @@ import {
   RefreshCw,
   Sparkles,
 } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
-
+import { motion } from "framer-motion";
+import { useRef, useState } from "react";
 
 import ProductCard from "../ProductCard";
 import { useRelatedProducts } from "@/hooks/useProduct";
@@ -29,25 +28,68 @@ export default function RelatedProducts({
     isFetching,
   } = useRelatedProducts(productId);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
-  const visibleProducts = 4;
-  const maxIndex = Math.max(products.length - visibleProducts, 0);
+  const [canGoPrevious, setCanGoPrevious] = useState(false);
+  const [canGoNext, setCanGoNext] = useState(
+    products.length > 1,
+  );
 
-  const canGoPrevious = currentIndex > 0;
-  const canGoNext = currentIndex < maxIndex;
+  /**
+   * Determine whether the carousel can move
+   * in either direction.
+   */
+  const updateNavigationState = () => {
+    const container = carouselRef.current;
 
-  const handlePrevious = () => {
-    if (!canGoPrevious) return;
+    if (!container) return;
 
-    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+    const maxScrollLeft =
+      container.scrollWidth - container.clientWidth;
+
+    setCanGoPrevious(container.scrollLeft > 5);
+
+    setCanGoNext(
+      container.scrollLeft < maxScrollLeft - 5,
+    );
   };
 
-  const handleNext = () => {
-    if (!canGoNext) return;
+  /**
+   * Scroll the carousel by approximately one card.
+   */
+  const scrollCarousel = (direction: "left" | "right") => {
+    const container = carouselRef.current;
 
-    setCurrentIndex((prev) =>
-      Math.min(prev + 1, maxIndex),
+    if (!container) return;
+
+    const firstCard =
+      container.querySelector<HTMLElement>(
+        "[data-carousel-card]",
+      );
+
+    if (!firstCard) return;
+
+    const cardWidth = firstCard.offsetWidth;
+
+    const gap = 16;
+
+    const scrollAmount = cardWidth + gap;
+
+    container.scrollBy({
+      left:
+        direction === "right"
+          ? scrollAmount
+          : -scrollAmount,
+      behavior: "smooth",
+    });
+
+    /*
+     * Allow the browser to finish the smooth scroll
+     * before recalculating the arrow state.
+     */
+    window.setTimeout(
+      updateNavigationState,
+      350,
     );
   };
 
@@ -98,8 +140,8 @@ export default function RelatedProducts({
               <div
                 key={index}
                 className="
-                  min-w-[72%]
-                  sm:min-w-[42%]
+                  min-w-[78%]
+                  sm:min-w-[46%]
                   lg:min-w-[calc((100%-48px)/4)]
                 "
               >
@@ -108,7 +150,9 @@ export default function RelatedProducts({
 
                   <div className="space-y-3 p-4">
                     <div className="h-3 w-1/3 animate-pulse rounded bg-neutral-200" />
+
                     <div className="h-4 w-3/4 animate-pulse rounded bg-neutral-200" />
+
                     <div className="h-4 w-1/2 animate-pulse rounded bg-neutral-200" />
                   </div>
                 </div>
@@ -177,8 +221,8 @@ export default function RelatedProducts({
             </h3>
 
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-neutral-500">
-              We couldn&apos;t find other products that closely
-              match this one right now.
+              We couldn&apos;t find other products that
+              closely match this one right now.
             </p>
 
             <Link
@@ -207,145 +251,137 @@ export default function RelatedProducts({
         !isError &&
         products.length > 0 && (
           <div className="relative mt-8">
-            {/* Carousel controls */}
-            <div className="mb-5 flex justify-end gap-2">
-              <button
-                type="button"
-                aria-label="Previous products"
-                onClick={handlePrevious}
-                disabled={!canGoPrevious}
-                className="
-                  flex
-                  h-11
-                  w-11
-                  items-center
-                  justify-center
-                  rounded-full
-                  border
-                  border-neutral-200
-                  bg-white
-                  text-neutral-700
-                  shadow-sm
-                  transition-all
-                  duration-300
-                  hover:border-neutral-300
-                  hover:bg-neutral-950
-                  hover:text-white
-                  disabled:pointer-events-none
-                  disabled:opacity-30
-                "
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </button>
+            {/* Controls */}
+            <div className="mb-5 flex items-center justify-between">
+              <p className="text-xs text-neutral-400">
+                {products.length}{" "}
+                {products.length === 1
+                  ? "recommendation"
+                  : "recommendations"}
+              </p>
 
-              <button
-                type="button"
-                aria-label="Next products"
-                onClick={handleNext}
-                disabled={!canGoNext}
-                className="
-                  flex
-                  h-11
-                  w-11
-                  items-center
-                  justify-center
-                  rounded-full
-                  border
-                  border-neutral-200
-                  bg-white
-                  text-neutral-700
-                  shadow-sm
-                  transition-all
-                  duration-300
-                  hover:border-neutral-300
-                  hover:bg-neutral-950
-                  hover:text-white
-                  disabled:pointer-events-none
-                  disabled:opacity-30
-                "
-              >
-                <ArrowRight className="h-4 w-4" />
-              </button>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  aria-label="Previous products"
+                  onClick={() =>
+                    scrollCarousel("left")
+                  }
+                  disabled={!canGoPrevious}
+                  className="
+                    flex
+                    h-11
+                    w-11
+                    items-center
+                    justify-center
+                    rounded-full
+                    border
+                    border-neutral-200
+                    bg-white
+                    text-neutral-700
+                    shadow-sm
+                    transition-all
+                    duration-300
+                    hover:border-neutral-300
+                    hover:bg-neutral-950
+                    hover:text-white
+                    disabled:pointer-events-none
+                    disabled:opacity-30
+                  "
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </button>
+
+                <button
+                  type="button"
+                  aria-label="Next products"
+                  onClick={() =>
+                    scrollCarousel("right")
+                  }
+                  disabled={!canGoNext}
+                  className="
+                    flex
+                    h-11
+                    w-11
+                    items-center
+                    justify-center
+                    rounded-full
+                    border
+                    border-neutral-200
+                    bg-white
+                    text-neutral-700
+                    shadow-sm
+                    transition-all
+                    duration-300
+                    hover:border-neutral-300
+                    hover:bg-neutral-950
+                    hover:text-white
+                    disabled:pointer-events-none
+                    disabled:opacity-30
+                  "
+                >
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
-            {/* Carousel viewport */}
-            <div className="relative overflow-hidden">
-              <motion.div
-                className="flex gap-4"
-                animate={{
-                  x: `calc(-${currentIndex} * (25% + 12px))`,
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 280,
-                  damping: 30,
-                  mass: 0.8,
-                }}
-                drag="x"
-                dragConstraints={{
-                  left: 0,
-                  right: 0,
-                }}
-                dragElastic={0.08}
-                onDragEnd={(_, info) => {
-                  const threshold = 50;
-
-                  if (info.offset.x < -threshold) {
-                    handleNext();
-                  }
-
-                  if (info.offset.x > threshold) {
-                    handlePrevious();
-                  }
-                }}
-              >
-                {products.map((product) => (
-                  <motion.div
-                    key={product.id}
-                    className="
-                      min-w-[78%]
-                      sm:min-w-[46%]
-                      lg:min-w-[calc((100%-48px)/4)]
-                    "
-                    initial={{
-                      opacity: 0,
-                      y: 16,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    transition={{
-                      duration: 0.45,
-                      ease: "easeOut",
-                    }}
-                  >
-                    <ProductCard product={product} />
-                  </motion.div>
-                ))}
-              </motion.div>
+            {/* Carousel */}
+            <div
+              ref={carouselRef}
+              onScroll={updateNavigationState}
+              className="
+                -mx-4
+                flex
+                snap-x
+                snap-mandatory
+                gap-4
+                overflow-x-auto
+                px-4
+                pb-4
+                scroll-smooth
+                [scrollbar-width:none]
+                [&::-webkit-scrollbar]:hidden
+                sm:-mx-6
+                sm:px-6
+                lg:-mx-0
+                lg:px-0
+              "
+            >
+              {products.map((product, index) => (
+                <motion.div
+                  key={product.id}
+                  data-carousel-card
+                  className="
+                    min-w-[78%]
+                    snap-start
+                    sm:min-w-[46%]
+                    lg:min-w-[calc((100%-48px)/4)]
+                  "
+                  initial={{
+                    opacity: 0,
+                    y: 16,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    duration: 0.4,
+                    delay: index * 0.06,
+                    ease: "easeOut",
+                  }}
+                >
+                  <ProductCard product={product} />
+                </motion.div>
+              ))}
             </div>
 
-            {/* Carousel progress */}
-            {products.length > visibleProducts && (
-              <div className="mt-6 flex items-center justify-center gap-1.5">
-                {Array.from({
-                  length: maxIndex + 1,
-                }).map((_, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    aria-label={`Go to product position ${
-                      index + 1
-                    }`}
-                    onClick={() => setCurrentIndex(index)}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      index === currentIndex
-                        ? "w-6 bg-neutral-950"
-                        : "w-1.5 bg-neutral-200 hover:bg-neutral-400"
-                    }`}
-                  />
-                ))}
+            {/* Mobile swipe hint */}
+            {products.length > 1 && (
+              <div className="mt-2 flex items-center justify-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-400 sm:hidden">
+                <span>Swipe to explore</span>
+
+                <ArrowRight className="h-3 w-3" />
               </div>
             )}
           </div>
