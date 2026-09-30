@@ -1,4 +1,4 @@
-import DiscoveryShell from "@/components/discovery/DiscoveryShell";
+import DiscoveryShell from "@/components/landing/discovery/DiscoveryShell";
 
 export const metadata = {
   title: "Find Products For Your Skin | BeautyHub",

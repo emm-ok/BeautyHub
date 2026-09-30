@@ -7,6 +7,7 @@ import Providers from "./providers";
 import Navbar from "@/components/landing/Navbar";
 import { CartProvider } from "@/components/layout/CartProvider";
 import CartDrawer from "@/components/cart/CartDrawer";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       >
         <body className="min-h-full flex flex-col">
+          <Toaster closeButton position="top-right" />
           <Providers>
             <CartProvider>
               <Navbar />

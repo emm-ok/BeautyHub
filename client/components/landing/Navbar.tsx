@@ -29,6 +29,7 @@ import { useCart } from "@/hooks/useCart";
 import {
   useCartDrawer,
 } from "@/components/layout/CartProvider";
+import { toast } from "sonner";
 
 const navigation = [
   {
@@ -123,6 +124,7 @@ export default function Navbar() {
     closeMobileMenu();
 
     if (!isSignedIn) {
+      toast("Please sign in to view cart")
       return;
     }
 
