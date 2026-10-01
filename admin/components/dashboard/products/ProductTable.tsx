@@ -2,17 +2,23 @@
 
 import Link from "next/link";
 import {
+  Loader2,
   MoreHorizontal,
+  Package,
   PackageOpen,
 } from "lucide-react";
 
 import type { AdminProduct } from "@/types/products";
+import UpdateProductDrawer from "./UpdateProductDrawer";
+import { useState } from "react";
 
 interface ProductTableProps {
   products: AdminProduct[];
   onDelete: (
     product: AdminProduct,
   ) => void;
+  isLoading?: boolean;
+  error?: unknown;
 }
 
 function formatPrice(value: string) {
@@ -23,6 +29,12 @@ function formatPrice(value: string) {
       maximumFractionDigits: 2,
     },
   )}`;
+}
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error
+    ? error.message
+    : "Unable to load products.";
 }
 
 function StatusBadge({
@@ -69,10 +81,9 @@ function VerificationBadge({
         font-medium
         ring-1
         ring-inset
-        ${
-          verified
-            ? "bg-blue-50 text-blue-700 ring-blue-600/10"
-            : "bg-neutral-100 text-neutral-500 ring-neutral-500/10"
+        ${verified
+          ? "bg-blue-50 text-blue-700 ring-blue-600/10"
+          : "bg-neutral-100 text-neutral-500 ring-neutral-500/10"
         }
       `}
     >
@@ -84,22 +95,193 @@ function VerificationBadge({
 export default function ProductTable({
   products,
   onDelete,
+  isLoading = false,
+  error,
 }: ProductTableProps) {
-  if (products.length === 0) {
+  const [
+    selectedProductId,
+    setSelectedProductId,
+  ] = useState<string | null>(null);
+
+  /* =========================================================
+     DRAWER
+  ========================================================== */
+
+  const drawerOpen =
+    selectedProductId !== null;
+
+  const openProductDrawer = (
+    productId: string,
+  ) => {
+    setSelectedProductId(productId);
+  };
+
+  const closeProductDrawer = () => {
+    setSelectedProductId(null);
+  };
+
+  /* =========================================================
+     LOADING
+  ========================================================== */
+
+  if (isLoading) {
     return (
-      <div className="rounded-2xl border border-neutral-200 bg-white px-6 py-16 text-center">
-        <PackageOpen className="mx-auto h-8 w-8 text-neutral-300" />
+      <div
+        className="
+          overflow-hidden
+          rounded-2xl
+          border
+          border-neutral-200
+          bg-white
+        "
+      >
+        <div
+          className="
+            flex
+            min-h-[360px]
+            items-center
+            justify-center
+          "
+        >
+          <div className="flex flex-col items-center">
+            <Loader2
+              className="
+                h-5
+                w-5
+                animate-spin
+                text-neutral-400
+              "
+            />
 
-        <h3 className="mt-4 text-sm font-semibold text-neutral-900">
-          No products found
-        </h3>
+            <p
+              className="
+                mt-3
+                text-xs
+                text-neutral-400
+              "
+            >
+              Loading products...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-        <p className="mt-1 text-sm text-neutral-500">
-          Try adjusting your search or filters.
+  /* =========================================================
+     ERROR
+  ========================================================== */
+
+  if (error) {
+    return (
+      <div
+        className="
+          rounded-2xl
+          border
+          border-red-100
+          bg-red-50
+          px-5
+          py-6
+          text-center
+        "
+      >
+        <p className="text-xs font-medium text-red-600">
+          {getErrorMessage(error)}
         </p>
       </div>
     );
   }
+
+  /* =========================================================
+     EMPTY
+  ========================================================== */
+
+  if (!products.length) {
+    return (
+      <>
+        <div
+          className="
+            flex
+            min-h-[360px]
+            flex-col
+            items-center
+            justify-center
+            rounded-2xl
+            border
+            border-dashed
+            border-neutral-200
+            bg-neutral-50/50
+            px-6
+            text-center
+          "
+        >
+          <div
+            className="
+              flex
+              h-11
+              w-11
+              items-center
+              justify-center
+              rounded-xl
+              bg-white
+              text-neutral-400
+              shadow-sm
+              ring-1
+              ring-neutral-200
+            "
+          >
+            <Package className="h-5 w-5" />
+          </div>
+
+          <h3
+            className="
+              mt-4
+              text-sm
+              font-semibold
+              text-neutral-900
+            "
+          >
+            No products found
+          </h3>
+
+          <p
+            className="
+              mt-1
+              max-w-sm
+              text-xs
+              leading-5
+              text-neutral-400
+            "
+          >
+            Products matching your current
+            filters will appear here.
+          </p>
+        </div>
+
+        <UpdateProductDrawer
+          open={drawerOpen}
+          productId={selectedProductId}
+          onClose={closeProductDrawer}
+        />
+      </>
+    );
+  }
+
+  // if (products.length === 0) {
+  //   return (
+  //     <div className="rounded-2xl border border-neutral-200 bg-white px-6 py-16 text-center">
+  //       <PackageOpen className="mx-auto h-8 w-8 text-neutral-300" />
+
+  //       <h3 className="mt-4 text-sm font-semibold text-neutral-900">
+  //         No products found
+  //       </h3>
+
+  //       <p className="mt-1 text-sm text-neutral-500">
+  //         Try adjusting your search or filters.
+  //       </p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
@@ -145,7 +327,12 @@ export default function ProductTable({
                 return (
                   <tr
                     key={product.id}
-                    className="group transition-colors hover:bg-neutral-50/60"
+                    onClick={() =>
+                      openProductDrawer(
+                        product.id,
+                      )
+                    }
+                    className="group cursor-pointer transition-colors hover:bg-neutral-50/60"
                   >
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
@@ -167,50 +354,104 @@ export default function ProductTable({
                         </div>
 
                         <div className="min-w-0">
-                          <Link
-                            href={`/admin/products/${product.id}`}
-                            className="block truncate text-sm font-semibold text-neutral-900 hover:text-neutral-600"
-                          >
-                            {product.name}
-                          </Link>
+                          <div className="flex items-center gap-2">
+                            <p
+                              className="
+                                max-w-[260px]
+                                truncate
+                                text-xs
+                                font-semibold
+                                text-neutral-900
+                              "
+                            >
+                              {product.name}
+                            </p>
 
-                          <p className="mt-0.5 truncate text-xs text-neutral-400">
+                            {product.discountType !==
+                              "NONE" &&
+                              Number(
+                                product.discountValue ??
+                                0,
+                              ) > 0 && (
+                                <span
+                                  className="
+                                    rounded-md
+                                    bg-neutral-100
+                                    px-1.5
+                                    py-0.5
+                                    text-[9px]
+                                    font-semibold
+                                    text-neutral-500
+                                  "
+                                >
+                                  Sale
+                                </span>
+                              )}
+                          </div>
+
+                          <p
+                            className="
+                              mt-1
+                              truncate
+                              text-[10px]
+                              text-neutral-400
+                            "
+                          >
                             {product.brand ??
-                              "Independent brand"}
+                              "BeautyHub catalogue"}
                           </p>
                         </div>
                       </div>
                     </td>
 
                     <td className="px-5 py-4 text-sm text-neutral-600">
-                      {product.category.name}
+                      {product.category.name ?? "—"}
                     </td>
 
-                    <td className="px-5 py-4">
-                      <p className="text-sm font-medium text-neutral-900">
-                        {formatPrice(
-                          product.salePrice,
-                        )}
-                      </p>
-
-                      {product.salePrice !==
-                        product.price && (
-                        <p className="mt-0.5 text-xs text-neutral-400 line-through">
+                    <td className="px-4 py-4">
+                      <div>
+                        <p
+                          className="
+                            text-xs
+                            font-semibold
+                            text-neutral-900
+                          "
+                        >
                           {formatPrice(
-                            product.price,
+                            product.salePrice,
                           )}
                         </p>
-                      )}
+
+                        {Number(
+                          product.price,
+                        ) >
+                          Number(
+                            product.salePrice,
+                          ) && (
+                            <p
+                              className="
+                              mt-0.5
+                              text-[10px]
+                              text-neutral-400
+                              line-through
+                            "
+                            >
+                              {formatPrice(
+                                product.price,
+                              )}
+                            </p>
+                          )}
+                      </div>
                     </td>
 
                     <td className="px-5 py-4">
                       <span
                         className={
                           product.stockQuantity ===
-                          0
+                            0
                             ? "text-sm font-semibold text-red-600"
                             : product.stockQuantity <=
-                                product.lowStockThreshold
+                              product.lowStockThreshold
                               ? "text-sm font-semibold text-amber-600"
                               : "text-sm text-neutral-700"
                         }
@@ -274,6 +515,11 @@ export default function ProductTable({
           return (
             <div
               key={product.id}
+              onClick={() =>
+                openProductDrawer(
+                  product.id,
+                )
+              }
               className="rounded-2xl border border-neutral-200 bg-white p-4"
             >
               <div className="flex gap-3">
@@ -334,6 +580,12 @@ export default function ProductTable({
           );
         })}
       </div>
+
+      <UpdateProductDrawer
+        open={drawerOpen}
+        productId={selectedProductId}
+        onClose={closeProductDrawer}
+      />
     </>
   );
 }

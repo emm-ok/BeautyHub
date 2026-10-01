@@ -24,6 +24,52 @@ export interface AdminProductImage {
   altText: string | null;
 }
 
+export interface Product {
+  id: string;
+
+  name: string;
+  slug: string;
+  description: string;
+
+  brand?: string | null;
+
+  categoryId: string;
+  category: AdminProductCategory;
+
+  price: string | number;
+  salePrice: string | number;
+
+  discountType?: 
+    | "NONE"
+    | "PERCENTAGE"
+    | "FIXED_AMOUNT";
+
+  discountValue?: string | number | null;
+
+  stockQuantity: number;
+  lowStockThreshold?: number;
+
+  status: ProductStatus;
+  verificationStatus: ProductVerificationStatus;
+
+  howToUse?: string | null;
+  keyIngredients?: string | null;
+  benefits?: string | null;
+  suitabilityNotes?: string | null;
+  warnings?: string | null;
+
+  skinTypes?: SkinType[];
+  concerns?: ProductConcern[];
+
+  size?: string | null;
+  unit?: string | null;
+
+  images: AdminProductImage[];
+
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface AdminProduct {
   id: string;
   name: string;
