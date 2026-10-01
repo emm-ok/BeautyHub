@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-
 import AdminSidebar from "@/components/dashboard/AdminSidebar";
 
 export const metadata: Metadata = {
@@ -22,8 +21,12 @@ export default function AdminLayout({
     <div className="min-h-screen bg-neutral-50">
       <AdminSidebar />
 
-      <main className="min-h-screen lg:pl-[264px]">
-        <div className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <main
+        className="min-h-screen pt-[68px] lg:pl-[264px] lg:pt-0 "
+      >
+        <div
+          className="mx-auto w-full max-w-[1600px] px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8 "
+        >
           {children}
         </div>
       </main>
