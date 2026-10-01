@@ -1,5 +1,6 @@
 import {
   Prisma,
+  ProductConcern,
   ProductStatus,
   ProductVerificationStatus,
   SkinType,
@@ -80,6 +81,12 @@ export async function createProduct(
 
       ...(data.size !== undefined && { size: data.size }),
       ...(data.unit !== undefined && { unit: data.unit }),
+      ...(data.skinTypes !== undefined && {
+        skinTypes: data.skinTypes as SkinType[],
+      }),
+      ...(data.concerns !== undefined && {
+        concerns: data.concerns as ProductConcern[],
+      }),
     },
 
     include: {
@@ -454,6 +461,12 @@ export async function updateProduct(
       ...(data.unit !== undefined && {
         unit: data.unit,
       }),
+      ...(data.skinTypes !== undefined && {
+        skinTypes: data.skinTypes as SkinType[],
+      }),
+      ...(data.concerns !== undefined && {
+        concerns: data.concerns as ProductConcern[],
+      }),
     },
 
     include: {
@@ -796,4 +809,22 @@ export async function getRelatedProducts(
   return rankedProducts.map(
     ({ candidate }) => candidate,
   );
+}
+
+
+export async function getActiveCategories() {
+  return prisma.category.findMany({
+    where: {
+      isActive: true,
+    },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      description: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
 }

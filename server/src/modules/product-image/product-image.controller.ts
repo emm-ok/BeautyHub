@@ -39,6 +39,7 @@ export async function uploadProductImageController(
       data: image,
     });
   } catch (error) {
+    console.error("Error uploading image", error)
     return res.status(400).json({
       success: false,
       message:

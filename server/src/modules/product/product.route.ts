@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
   createProductController,
   deleteProductController,
+  getActiveCategoriesController,
   getProductController,
   getProductsController,
   getRelatedProductsController,
@@ -31,6 +32,11 @@ router.post(
 router.get(
   "/",
   getProductsController
+);
+
+router.get(
+  "/categories",
+  getActiveCategoriesController
 );
 
 router.get(

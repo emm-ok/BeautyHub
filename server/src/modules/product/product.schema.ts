@@ -3,8 +3,10 @@ import { z } from "zod";
 import {
   DiscountType,
   ProductCategory,
+  ProductConcern,
   ProductStatus,
   ProductVerificationStatus,
+  SkinType,
 } from "@prisma/client";
 
 const optionalString = z
@@ -14,75 +16,77 @@ const optionalString = z
   .nullable();
 
 const productFields = {
-    name: z
-      .string()
-      .trim()
-      .min(2, "Product name must be at least 2 characters."),
+  name: z
+    .string()
+    .trim()
+    .min(2, "Product name must be at least 2 characters."),
 
-    slug: z
-      .string()
-      .trim()
-      .min(2, "Product slug is required."),
+  slug: z
+    .string()
+    .trim()
+    .min(2, "Product slug is required."),
 
-    description: z
-      .string()
-      .trim()
-      .min(10, "Product description must be at least 10 characters."),
+  description: z
+    .string()
+    .trim()
+    .min(10, "Product description must be at least 10 characters."),
 
-    brand: optionalString,
+  brand: optionalString,
 
-    categoryId: z
-      .string()
-      .uuid("Invalid category ID."),
+  categoryId: z
+    .string()
+    .uuid("Invalid category ID."),
 
-    price: z
-      .number()
-      .positive("Price must be greater than zero."),
+  price: z
+    .number()
+    .positive("Price must be greater than zero."),
 
-    discountType: z
-      .nativeEnum(DiscountType)
-      .default(DiscountType.NONE),
+  discountType: z
+    .nativeEnum(DiscountType)
+    .default(DiscountType.NONE),
 
-    discountValue: z
-      .number()
-      .positive("Discount value must be greater than zero.")
-      .nullable()
-      .optional(),
+  discountValue: z
+    .number()
+    .positive("Discount value must be greater than zero.")
+    .nullable()
+    .optional(),
 
-    stockQuantity: z
-      .number()
-      .int()
-      .min(0)
-      .default(0),
+  stockQuantity: z
+    .number()
+    .int()
+    .min(0)
+    .default(0),
 
-    lowStockThreshold: z
-      .number()
-      .int()
-      .min(0)
-      .default(5),
+  lowStockThreshold: z
+    .number()
+    .int()
+    .min(0)
+    .default(5),
 
-    status: z
-      .nativeEnum(ProductStatus)
-      .default(ProductStatus.ACTIVE),
+  status: z
+    .nativeEnum(ProductStatus)
+    .default(ProductStatus.ACTIVE),
 
-    verificationStatus: z
-      .nativeEnum(ProductVerificationStatus)
-      .default(ProductVerificationStatus.NOT_VERIFIED),
+  verificationStatus: z
+    .nativeEnum(ProductVerificationStatus)
+    .default(ProductVerificationStatus.NOT_VERIFIED),
 
-    howToUse: optionalString,
+  howToUse: optionalString,
 
-    keyIngredients: optionalString,
+  keyIngredients: optionalString,
 
-    benefits: optionalString,
+  benefits: optionalString,
 
-    suitabilityNotes: optionalString,
+  suitabilityNotes: optionalString,
 
-    warnings: optionalString,
+  warnings: optionalString,
 
-    size: optionalString,
+  size: optionalString,
 
-    unit: optionalString,
-  };
+  unit: optionalString,
+  skinTypes: z.array(z.enum(SkinType)),
+  concerns: z.array(z.enum(ProductConcern)),
+};
 
 
 const validateDiscount = (

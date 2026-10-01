@@ -29,6 +29,8 @@ export async function createProductImage(
   const cloudinaryImage =
     await uploadProductImage(file.buffer);
 
+    console.log("CloudinaryImage", cloudinaryImage)
+
   const isFirstImage =
     existingImageCount === 0;
 
@@ -62,7 +64,7 @@ export async function createProductImage(
 
 export async function deleteProductImage(
   productId: string,
-  imageId: string
+  imageId: string,
 ) {
   const image =
     await prisma.productImage.findFirst({
@@ -73,13 +75,10 @@ export async function deleteProductImage(
     });
 
   if (!image) {
-    throw new Error("Product image not found.");
+    throw new Error(
+      "Product image not found.",
+    );
   }
-
-  // Remove the Cloudinary asset first.
-  await deleteCloudinaryImage(
-    image.public_id
-  );
 
   await prisma.$transaction(async (tx) => {
     await tx.productImage.delete({
@@ -88,8 +87,6 @@ export async function deleteProductImage(
       },
     });
 
-    // If the deleted image was primary,
-    // promote the first remaining image.
     if (image.isPrimary) {
       const nextImage =
         await tx.productImage.findFirst({
@@ -114,8 +111,25 @@ export async function deleteProductImage(
     }
   });
 
+  try {
+    await deleteCloudinaryImage(
+      image.public_id,
+    );
+  } catch (error) {
+    console.error(
+      "Cloudinary cleanup failed:",
+      {
+        productId,
+        imageId,
+        publicId: image.public_id,
+        error,
+      },
+    );
+  }
+
   return {
-    message: "Product image deleted successfully.",
+    message:
+      "Product image deleted successfully.",
   };
 }
 

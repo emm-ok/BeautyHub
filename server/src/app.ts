@@ -11,6 +11,7 @@ import userRoutes from "./routes/user.routes.js";
 import productDiscoveryRoutes from "./modules/product-discovery/product-discovery.route.js";
 import productRoutes from "./modules/product/product.route.js";
 import cartRoutes from "./modules/cart/cart.route.js";
+import dashboardRoutes from "./modules/dashboard/dashboard.route.js";
 
 const app: Application = express();
 
@@ -31,6 +32,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/products/discover", productDiscoveryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.get("/users", async(req, res) => {
     const users = await prisma.user.findMany();

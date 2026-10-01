@@ -15,8 +15,10 @@ import {
   getProductById,
   getProducts,
   updateProduct,
-  getRelatedProducts
+  getRelatedProducts,
+  getActiveCategories
 } from "./product.service.js";
+import { errorMonitor } from "node:events";
 
 export async function createProductController(
   req: Request,
@@ -35,12 +37,15 @@ export async function createProductController(
     });
   } catch (error) {
     if (error instanceof ZodError) {
+      console.error("Error creating product", error.flatten())
       return res.status(400).json({
         success: false,
         message: "Validation failed.",
         errors: error.flatten(),
       });
     }
+
+    console.error("Error creating product", error)
 
     return res.status(400).json({
       success: false,
@@ -258,4 +263,17 @@ export async function getRelatedProductsController(
         "Unable to retrieve related products.",
     });
   }
+}
+
+
+export async function getActiveCategoriesController(
+  _req: Request,
+  res: Response,
+) {
+  const categories = await getActiveCategories();
+
+  return res.status(200).json({
+    success: true,
+    data: categories,
+  });
 }
