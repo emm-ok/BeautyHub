@@ -1,16 +1,17 @@
 "use client";
 
-import Link from "next/link";
 import {
+  ChevronRight,
   Loader2,
-  MoreHorizontal,
   Package,
   PackageOpen,
+  Trash2,
 } from "lucide-react";
 
 import type { AdminProduct } from "@/types/products";
 import UpdateProductDrawer from "./UpdateProductDrawer";
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface ProductTableProps {
   products: AdminProduct[];
@@ -29,6 +30,21 @@ function formatPrice(value: string) {
       maximumFractionDigits: 2,
     },
   )}`;
+}
+
+function getStockClasses(product: AdminProduct) {
+  if (product.stockQuantity <= 0) {
+    return "text-red-600";
+  }
+
+  if (
+    product.stockQuantity <=
+    product.lowStockThreshold
+  ) {
+    return "text-amber-600";
+  }
+
+  return "text-neutral-700";
 }
 
 function getErrorMessage(error: unknown) {
@@ -320,19 +336,36 @@ export default function ProductTable({
             </thead>
 
             <tbody className="divide-y divide-neutral-100">
+              <AnimatePresence initial={false}>
               {products.map((product) => {
                 const image =
                   product.images?.[0];
 
                 return (
-                  <tr
+                  <motion.tr
                     key={product.id}
+                    layout
+                    initial={{
+                      opacity: 0,
+                    }}
+                    animate={{
+                      opacity: 1,
+                    }}
+                    exit={{
+                      opacity: 0,
+                    }}
                     onClick={() =>
                       openProductDrawer(
                         product.id,
                       )
                     }
-                    className="group cursor-pointer transition-colors hover:bg-neutral-50/60"
+                    className="
+                      group
+                      cursor-pointer
+                      bg-white
+                      transition-colors
+                      hover:bg-neutral-50/80
+                    "
                   >
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
@@ -495,12 +528,13 @@ export default function ProductTable({
                         "
                         aria-label={`Actions for ${product.name}`}
                       >
-                        <MoreHorizontal className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </td>
-                  </tr>
+                  </motion.tr>
                 );
               })}
+              </AnimatePresence>
             </tbody>
           </table>
         </div>
@@ -508,77 +542,151 @@ export default function ProductTable({
 
       {/* Mobile */}
       <div className="space-y-3 md:hidden">
-        {products.map((product: AdminProduct) => {
-          const image =
-            product.images?.[0];
+        <AnimatePresence initial={false}>
+          {products.map((product) => {
+            const image =
+              product.images?.[0];
 
-          return (
-            <div
-              key={product.id}
-              onClick={() =>
-                openProductDrawer(
-                  product.id,
-                )
-              }
-              className="rounded-2xl border border-neutral-200 bg-white p-4"
-            >
-              <div className="flex gap-3">
-                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
-                  {image ? (
-                    <img
-                      src={image.url}
-                      alt={
-                        image.altText ??
-                        product.name
-                      }
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-neutral-300">
-                      <PackageOpen className="h-5 w-5" />
-                    </div>
-                  )}
-                </div>
-
-                <div className="min-w-0 flex-1">
-                  <Link
-                    href={`/admin/products/${product.id}`}
-                    className="line-clamp-2 text-sm font-semibold text-neutral-900"
-                  >
-                    {product.name}
-                  </Link>
-
-                  <p className="mt-1 text-xs text-neutral-400">
-                    {product.category.name}
-                  </p>
-
-                  <p className="mt-2 text-sm font-semibold text-neutral-900">
-                    {formatPrice(
-                      product.salePrice,
+            return (
+              <motion.button
+                key={product.id}
+                type="button"
+                layout
+                initial={{
+                  opacity: 0,
+                }}
+                animate={{
+                  opacity: 1,
+                }}
+                exit={{
+                  opacity: 0,
+                }}
+                onClick={() =>
+                  openProductDrawer(
+                    product.id,
+                  )
+                }
+                className="
+                  group
+                  block
+                  w-full
+                  cursor-pointer
+                  bg-white
+                  px-4
+                  py-4
+                  text-left
+                  transition
+                  hover:bg-neutral-50/80
+                  sm:px-5
+                "
+              >
+                <div className="flex gap-3">
+                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
+                    {image ? (
+                      <img
+                        src={image.url}
+                        alt={
+                          image.altText ??
+                          product.name
+                        }
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-neutral-300">
+                        <PackageOpen className="h-5 w-5" />
+                      </div>
                     )}
-                  </p>
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p
+                          className="truncate text-xs font-semibold text-neutral-900"
+                        >
+                          {product.name}
+                        </p>
+
+                        <p
+                          className="mt-1 truncate text-[10px] text-neutral-400"
+                        >
+                          {product.brand ??
+                            "BeautyHub catalogue"}
+                        </p>
+                      </div>
+
+                      <ChevronRight
+                        className="mt-0.5 h-4 w-4 shrink-0 text-neutral-300 transition group-hover:text-neutral-700"
+                      />
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <StatusBadge
+                        status={
+                          product.status
+                        }
+                      />
+
+                      <VerificationBadge
+                        verified={
+                          product.verificationStatus ===
+                          "VERIFIED"
+                        }
+                      />
+                    </div>
+
+                    <div
+                      className="mt-3 grid grid-cols-3 gap-3 border-t border-neutral-100 pt-3"
+                    >
+                      <div>
+                        <p
+                          className="text-[9px] font-medium uppercase tracking-[0.1em] text-neutral-400"
+                        >
+                          Price
+                        </p>
+                        <p
+                          className="mt-1 text-xs font-semibold text-neutral-900"
+                        >
+                          {formatPrice(
+                            product.salePrice,
+                          )}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p
+                          className="text-[9px] font-medium uppercase tracking-[0.1em] text-neutral-400"
+                        >
+                          Stock
+                        </p>
+                        <p
+                          className={`mt-1 text-xs font-semibold ${getStockClasses(product)} `}
+                        >
+                          {product.stockQuantity.toLocaleString()}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p
+                          className="text-[9px] font-medium uppercase tracking-[0.1em] text-neutral-400"
+                        >
+                          Category
+                        </p>
+
+                        <p
+                          className="mt-1 truncate text-xs font-medium text-neutral-700"
+                        >
+                          {product.category?.name ??
+                            "—"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                <StatusBadge
-                  status={product.status}
-                />
-
-                <VerificationBadge
-                  verified={
-                    product.verificationStatus ===
-                    "VERIFIED"
-                  }
-                />
-
-                <span className="ml-auto text-xs text-neutral-500">
-                  {product.stockQuantity} in stock
-                </span>
-              </div>
-            </div>
-          );
-        })}
+              </motion.button>
+            );
+          })}
+        </AnimatePresence>
       </div>
 
       <UpdateProductDrawer

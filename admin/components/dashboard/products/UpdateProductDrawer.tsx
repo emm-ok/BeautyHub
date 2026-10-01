@@ -1595,7 +1595,7 @@ export default function UpdateProductDrawer({
                                     }
                                     alt={
                                       image.altText ??
-                                      product.name
+                                      product?.name
                                     }
                                     className="
                                       h-full

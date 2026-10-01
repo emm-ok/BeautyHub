@@ -59,103 +59,103 @@ const SKIN_TYPE_OPTIONS: {
   label: string;
   description: string;
 }[] = [
-  {
-    value: "NORMAL",
-    label: "Normal",
-    description:
-      "Balanced skin with minimal concerns",
-  },
-  {
-    value: "DRY",
-    label: "Dry",
-    description:
-      "Skin that lacks moisture",
-  },
-  {
-    value: "OILY",
-    label: "Oily",
-    description:
-      "Skin with excess oil production",
-  },
-  {
-    value: "COMBINATION",
-    label: "Combination",
-    description:
-      "Combination of oily and dry areas",
-  },
-  {
-    value: "SENSITIVE",
-    label: "Sensitive",
-    description:
-      "Skin prone to irritation",
-  },
-  {
-    value: "ALL",
-    label: "All skin types",
-    description:
-      "Suitable across skin types",
-  },
-  {
-    value: "UNKNOWN",
-    label: "Not specified",
-    description:
-      "Skin type has not been specified",
-  },
-];
+    {
+      value: "NORMAL",
+      label: "Normal",
+      description:
+        "Balanced skin with minimal concerns",
+    },
+    {
+      value: "DRY",
+      label: "Dry",
+      description:
+        "Skin that lacks moisture",
+    },
+    {
+      value: "OILY",
+      label: "Oily",
+      description:
+        "Skin with excess oil production",
+    },
+    {
+      value: "COMBINATION",
+      label: "Combination",
+      description:
+        "Combination of oily and dry areas",
+    },
+    {
+      value: "SENSITIVE",
+      label: "Sensitive",
+      description:
+        "Skin prone to irritation",
+    },
+    {
+      value: "ALL",
+      label: "All skin types",
+      description:
+        "Suitable across skin types",
+    },
+    {
+      value: "UNKNOWN",
+      label: "Not specified",
+      description:
+        "Skin type has not been specified",
+    },
+  ];
 
 const CONCERN_OPTIONS: {
   value: ProductConcern;
   label: string;
 }[] = [
-  {
-    value: "ACNE_PRONE",
-    label: "Acne-prone skin",
-  },
-  {
-    value: "DARK_SPOTS",
-    label: "Dark spots",
-  },
-  {
-    value: "UNEVEN_SKIN_TONE",
-    label: "Uneven skin tone",
-  },
-  {
-    value: "DRYNESS",
-    label: "Dryness",
-  },
-  {
-    value: "OILY_SKIN",
-    label: "Oily skin",
-  },
-  {
-    value: "SENSITIVE_SKIN",
-    label: "Sensitive skin",
-  },
-  {
-    value: "ROUGH_SKIN",
-    label: "Rough skin",
-  },
-  {
-    value: "BUMPY_SKIN",
-    label: "Bumpy skin",
-  },
-  {
-    value: "BODY_ACNE",
-    label: "Body acne",
-  },
-  {
-    value: "ANTI_AGING",
-    label: "Anti-aging",
-  },
-  {
-    value: "GENERAL_SKINCARE",
-    label: "General skincare",
-  },
-  {
-    value: "GENERAL_BODY_CARE",
-    label: "General body care",
-  },
-];
+    {
+      value: "ACNE_PRONE",
+      label: "Acne-prone skin",
+    },
+    {
+      value: "DARK_SPOTS",
+      label: "Dark spots",
+    },
+    {
+      value: "UNEVEN_SKIN_TONE",
+      label: "Uneven skin tone",
+    },
+    {
+      value: "DRYNESS",
+      label: "Dryness",
+    },
+    {
+      value: "OILY_SKIN",
+      label: "Oily skin",
+    },
+    {
+      value: "SENSITIVE_SKIN",
+      label: "Sensitive skin",
+    },
+    {
+      value: "ROUGH_SKIN",
+      label: "Rough skin",
+    },
+    {
+      value: "BUMPY_SKIN",
+      label: "Bumpy skin",
+    },
+    {
+      value: "BODY_ACNE",
+      label: "Body acne",
+    },
+    {
+      value: "ANTI_AGING",
+      label: "Anti-aging",
+    },
+    {
+      value: "GENERAL_SKINCARE",
+      label: "General skincare",
+    },
+    {
+      value: "GENERAL_BODY_CARE",
+      label: "General body care",
+    },
+  ];
 
 /* Constants                                                                  */
 
@@ -247,8 +247,8 @@ function calculatePreviewPrice(
     return Math.max(
       0,
       price -
-        price *
-          (discountValue / 100),
+      price *
+      (discountValue / 100),
     );
   }
 
@@ -348,7 +348,7 @@ export default function AddProductDrawer({
       name: value,
       slug:
         previous.slug ===
-        slugify(previous.name)
+          slugify(previous.name)
           ? slugify(value)
           : previous.slug,
     }));
@@ -372,12 +372,12 @@ export default function AddProductDrawer({
 
       let next = exists
         ? previous.skinTypes.filter(
-            (item) => item !== value,
-          )
+          (item) => item !== value,
+        )
         : [
-            ...previous.skinTypes,
-            value,
-          ];
+          ...previous.skinTypes,
+          value,
+        ];
 
       /*
        * "ALL" represents every skin type.
@@ -417,12 +417,12 @@ export default function AddProductDrawer({
         ...previous,
         concerns: exists
           ? previous.concerns.filter(
-              (item) => item !== value,
-            )
+            (item) => item !== value,
+          )
           : [
-              ...previous.concerns,
-              value,
-            ],
+            ...previous.concerns,
+            value,
+          ],
       };
     });
 
@@ -575,9 +575,9 @@ export default function AddProductDrawer({
         previous.map((image) =>
           image.id === id
             ? {
-                ...image,
-                altText,
-              }
+              ...image,
+              altText,
+            }
             : image,
         ),
     );
@@ -627,7 +627,7 @@ export default function AddProductDrawer({
 
     if (
       form.discountType ===
-        "PERCENTAGE" &&
+      "PERCENTAGE" &&
       Number(form.discountValue) > 100
     ) {
       nextErrors.discountValue =
@@ -636,9 +636,9 @@ export default function AddProductDrawer({
 
     if (
       form.discountType ===
-        "FIXED_AMOUNT" &&
+      "FIXED_AMOUNT" &&
       form.discountValue !==
-        undefined &&
+      undefined &&
       form.discountValue >= form.price
     ) {
       nextErrors.discountValue =
@@ -701,11 +701,11 @@ export default function AddProductDrawer({
             (item) =>
               item.id === image.id
                 ? {
-                    ...item,
-                    status:
-                      "uploading",
-                    error: undefined,
-                  }
+                  ...item,
+                  status:
+                    "uploading",
+                  error: undefined,
+                }
                 : item,
           ),
       );
@@ -723,10 +723,10 @@ export default function AddProductDrawer({
               (item) =>
                 item.id === image.id
                   ? {
-                      ...item,
-                      status:
-                        "uploaded",
-                    }
+                    ...item,
+                    status:
+                      "uploaded",
+                  }
                   : item,
             ),
         );
@@ -744,11 +744,11 @@ export default function AddProductDrawer({
               (item) =>
                 item.id === image.id
                   ? {
-                      ...item,
-                      status:
-                        "error",
-                      error: message,
-                    }
+                    ...item,
+                    status:
+                      "error",
+                    error: message,
+                  }
                   : item,
             ),
         );
@@ -758,7 +758,7 @@ export default function AddProductDrawer({
         Math.round(
           ((index + 1) /
             pendingImages.length) *
-            100,
+          100,
         ),
       );
     }
@@ -767,10 +767,9 @@ export default function AddProductDrawer({
 
     if (failed.length > 0) {
       setImageUploadError(
-        `${failed.length} image${
-          failed.length > 1
-            ? "s"
-            : ""
+        `${failed.length} image${failed.length > 1
+          ? "s"
+          : ""
         } could not be uploaded.`,
       );
     }
@@ -1219,85 +1218,84 @@ export default function AddProductDrawer({
                   {/* Image previews */}
                   {pendingImages.length >
                     0 && (
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                      {pendingImages.map(
-                        (
-                          image,
-                          index,
-                        ) => (
-                          <motion.div
-                            key={image.id}
-                            layout
-                            initial={{
-                              opacity: 0,
-                              scale: 0.96,
-                            }}
-                            animate={{
-                              opacity: 1,
-                              scale: 1,
-                            }}
-                            className="group overflow-hidden rounded-xl border border-neutral-200 bg-white"
-                          >
-                            <div className="relative aspect-square overflow-hidden bg-neutral-100">
-                              <img
-                                src={
-                                  image.preview
-                                }
-                                alt={
-                                  image.altText ||
-                                  `Product image ${
-                                    index +
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {pendingImages.map(
+                          (
+                            image,
+                            index,
+                          ) => (
+                            <motion.div
+                              key={image.id}
+                              layout
+                              initial={{
+                                opacity: 0,
+                                scale: 0.96,
+                              }}
+                              animate={{
+                                opacity: 1,
+                                scale: 1,
+                              }}
+                              className="group overflow-hidden rounded-xl border border-neutral-200 bg-white"
+                            >
+                              <div className="relative aspect-square overflow-hidden bg-neutral-100">
+                                <img
+                                  src={
+                                    image.preview
+                                  }
+                                  alt={
+                                    image.altText ||
+                                    `Product image ${index +
                                     1
-                                  }`
-                                }
-                                className="h-full w-full object-cover"
-                              />
+                                    }`
+                                  }
+                                  className="h-full w-full object-cover"
+                                />
 
-                              {/* Primary badge */}
-                              {index ===
-                                0 && (
-                                <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-neutral-950 px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-white">
-                                  <Star className="h-2.5 w-2.5 fill-current" />
-                                  Primary
-                                </div>
-                              )}
+                                {/* Primary badge */}
+                                {index ===
+                                  0 && (
+                                    <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-neutral-950 px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-white">
+                                      <Star className="h-2.5 w-2.5 fill-current" />
+                                      Primary
+                                    </div>
+                                  )}
 
-                              {/* Status */}
-                              {image.status ===
-                                "uploading" && (
-                                <div className="absolute inset-0 flex items-center justify-center bg-neutral-950/40">
-                                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white">
-                                    <Loader2 className="h-4 w-4 animate-spin text-neutral-900" />
-                                  </div>
-                                </div>
-                              )}
+                                {/* Status */}
+                                {image.status ===
+                                  "uploading" && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-neutral-950/40">
+                                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white">
+                                        <Loader2 className="h-4 w-4 animate-spin text-neutral-900" />
+                                      </div>
+                                    </div>
+                                  )}
 
-                              {image.status ===
-                                "uploaded" && (
-                                <div className="absolute bottom-2 left-2 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm">
-                                  <Check className="h-3.5 w-3.5" />
-                                </div>
-                              )}
+                                {image.status ===
+                                  "uploaded" && (
+                                    <div className="absolute bottom-2 left-2 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm">
+                                      <Check className="h-3.5 w-3.5" />
+                                    </div>
+                                  )}
 
-                              {image.status ===
-                                "error" && (
-                                <div className="absolute bottom-2 left-2 rounded-full bg-red-600 px-2 py-1 text-[9px] font-semibold text-white">
-                                  Upload failed
-                                </div>
-                              )}
+                                {image.status ===
+                                  "error" && (
+                                    <div className="absolute bottom-2 left-2 rounded-full bg-red-600 px-2 py-1 text-[9px] font-semibold text-white">
+                                      Upload failed
+                                    </div>
+                                  )}
 
-                              {/* Remove */}
-                              <button
-                                type="button"
-                                disabled={
-                                  uploadingImages
-                                }
-                                onClick={() =>
-                                  removePendingImage(
-                                    image.id,
-                                  )
-                                }
-                                className="
+                                {/* Remove */}
+                                <button
+                                  type="button"
+                                  disabled={
+                                    uploadingImages
+                                  }
+                                  onClick={() =>
+                                    removePendingImage(
+                                      image.id,
+                                    )
+                                  }
+                                  className="
                                   absolute
                                   right-2
                                   top-2
@@ -1317,33 +1315,33 @@ export default function AddProductDrawer({
                                   sm:opacity-0
                                   sm:group-hover:opacity-100
                                 "
-                                aria-label="Remove image"
-                              >
-                                <X className="h-3.5 w-3.5" />
-                              </button>
-                            </div>
+                                  aria-label="Remove image"
+                                >
+                                  <X className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
 
-                            {/* Alt text */}
-                            <div className="p-2.5">
-                              <input
-                                value={
-                                  image.altText
-                                }
-                                onChange={(
-                                  event,
-                                ) =>
-                                  updateImageAltText(
-                                    image.id,
-                                    event
-                                      .target
-                                      .value,
-                                  )
-                                }
-                                disabled={
-                                  uploadingImages
-                                }
-                                placeholder="Alt text"
-                                className="
+                              {/* Alt text */}
+                              <div className="p-2.5">
+                                <input
+                                  value={
+                                    image.altText
+                                  }
+                                  onChange={(
+                                    event,
+                                  ) =>
+                                    updateImageAltText(
+                                      image.id,
+                                      event
+                                        .target
+                                        .value,
+                                    )
+                                  }
+                                  disabled={
+                                    uploadingImages
+                                  }
+                                  placeholder="Alt text"
+                                  className="
                                   h-8
                                   w-full
                                   rounded-lg
@@ -1358,21 +1356,21 @@ export default function AddProductDrawer({
                                   focus:bg-white
                                   disabled:opacity-50
                                 "
-                              />
-                            </div>
+                                />
+                              </div>
 
-                            {image.error && (
-                              <p className="px-2.5 pb-2.5 text-[10px] text-red-600">
-                                {
-                                  image.error
-                                }
-                              </p>
-                            )}
-                          </motion.div>
-                        ),
-                      )}
-                    </div>
-                  )}
+                              {image.error && (
+                                <p className="px-2.5 pb-2.5 text-[10px] text-red-600">
+                                  {
+                                    image.error
+                                  }
+                                </p>
+                              )}
+                            </motion.div>
+                          ),
+                        )}
+                      </div>
+                    )}
 
                   <p className="text-[11px] leading-5 text-neutral-400">
                     Maximum {MAX_IMAGES} images.
@@ -1451,38 +1449,38 @@ export default function AddProductDrawer({
 
                   {form.discountType !==
                     "NONE" && (
-                    <Field
-                      label={
-                        form.discountType ===
-                        "PERCENTAGE"
-                          ? "Discount percentage"
-                          : "Discount amount"
-                      }
-                      error={
-                        errors.discountValue
-                      }
-                    >
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={
-                          form.discountValue ??
-                          ""
+                      <Field
+                        label={
+                          form.discountType ===
+                            "PERCENTAGE"
+                            ? "Discount percentage"
+                            : "Discount amount"
                         }
-                        onChange={(event) =>
-                          updateField(
-                            "discountValue",
-                            Number(
-                              event.target
-                                .value,
-                            ),
-                          )
+                        error={
+                          errors.discountValue
                         }
-                        className={inputClass}
-                      />
-                    </Field>
-                  )}
+                      >
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={
+                            form.discountValue ??
+                            ""
+                          }
+                          onChange={(event) =>
+                            updateField(
+                              "discountValue",
+                              Number(
+                                event.target
+                                  .value,
+                              ),
+                            )
+                          }
+                          className={inputClass}
+                        />
+                      </Field>
+                    )}
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field
@@ -1555,7 +1553,7 @@ export default function AddProductDrawer({
                         "NONE" &&
                         form.discountValue &&
                         form.price >
-                          0 && (
+                        0 && (
                           <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700">
                             Discount applied
                           </span>
@@ -1832,7 +1830,7 @@ export default function AddProductDrawer({
                     </Field>
 
                     <Field label="Verification">
-                      <select
+                      {/* <select
                         value={
                           form.verificationStatus
                         }
@@ -1852,7 +1850,38 @@ export default function AddProductDrawer({
                         <option value="VERIFIED">
                           Verified
                         </option>
-                      </select>
+                      </select> */}
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateField(
+                            "verificationStatus",
+                            form.verificationStatus ===
+                              "VERIFIED"
+                              ? "NOT_VERIFIED"
+                              : "VERIFIED",
+                          )
+                        }
+                        className={`relative h-6 w-11 shrink-0 rounded-full transition ${form.verificationStatus ===
+                            "VERIFIED"
+                            ? "bg-neutral-950"
+                            : "bg-neutral-200"
+                          }
+                        `}
+                        aria-label="Toggle product verification"
+                      >
+                        <motion.span
+                          animate={{
+                            x:
+                              form.verificationStatus ===
+                                "VERIFIED"
+                                ? 20
+                                : 2,
+                          }}
+                          className="absolute left-0 top-1 h-4 w-4 rounded-full bg-white shadow-sm"
+                        />
+                      </button>
                     </Field>
                   </div>
 
@@ -1908,7 +1937,7 @@ export default function AddProductDrawer({
 
                     <span>
                       {createProduct.error instanceof
-                      Error
+                        Error
                         ? createProduct.error.message
                         : "Unable to create product. Please try again."}
                     </span>
@@ -2080,24 +2109,23 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <label className="block">
-      <span className="mb-1.5 block text-xs font-medium text-neutral-700">
-        {label}
+    <div className="space-y-2">
+      <div className="flex items-center justify-between gap-3">
+        <label className="text-xs font-medium text-neutral-700">
+          {label}
+          {required && (
+            <span className="ml-1 text-neutral-400">*</span>
+          )}
+        </label>
 
-        {required && (
-          <span className="ml-1 text-neutral-400">
-            *
+        {error && (
+          <span className="text-[10px] text-red-600">
+            {error}
           </span>
         )}
-      </span>
+      </div>
 
       {children}
-
-      {error && (
-        <span className="mt-1.5 block text-xs text-red-600">
-          {error}
-        </span>
-      )}
-    </label>
+    </div>
   );
 }
