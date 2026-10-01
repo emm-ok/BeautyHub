@@ -13,6 +13,7 @@ import type {
   UpdateProductInput,
 } from "./product.schema.js";
 import { calculateSalePrice } from "../../utils/pricing.js";
+import { deleteCloudinaryImage } from "../../utils/cloudinary.js";
 
 export async function createProduct(
   data: CreateProductInput
@@ -490,6 +491,9 @@ export async function deleteProduct(
       where: {
         id,
       },
+      include: {
+        images: true,
+      },
     });
 
   if (!existingProduct) {
@@ -497,10 +501,22 @@ export async function deleteProduct(
   }
 
   try {
-    await prisma.product.delete({
-      where: {
-        id,
-      },
+    await prisma.$transaction(async (tx) => {
+      await tx.product.delete({
+        where: {
+          id,
+        },
+      });
+
+      await tx.productImage.deleteMany({
+        where: {
+          productId: id,
+        },
+      });
+
+      for (const image of existingProduct.images) {
+        await deleteCloudinaryImage(image.public_id);
+      }
     });
   } catch (error) {
     if (
@@ -710,22 +726,22 @@ export async function getRelatedProducts(
 
         ...(currentProduct.concerns.length > 0
           ? [
-              {
-                concerns: {
-                  hasSome: currentProduct.concerns,
-                },
+            {
+              concerns: {
+                hasSome: currentProduct.concerns,
               },
-            ]
+            },
+          ]
           : []),
 
         ...(currentProduct.skinTypes.length > 0
           ? [
-              {
-                skinTypes: {
-                  hasSome: currentProduct.skinTypes,
-                },
+            {
+              skinTypes: {
+                hasSome: currentProduct.skinTypes,
               },
-            ]
+            },
+          ]
           : []),
       ],
     },

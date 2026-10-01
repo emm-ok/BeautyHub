@@ -511,9 +511,10 @@ export default function ProductTable({
                     <td className="px-4 py-4">
                       <button
                         type="button"
-                        onClick={() =>
-                          onDelete(product)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(product);
+                        }}
                         className="
                           flex
                           h-8
