@@ -112,8 +112,6 @@ function VerificationBadge({
 export default function ProductTable({
   products,
   onDelete,
-  isLoading = false,
-  error,
 }: ProductTableProps) {
   const [
     selectedProductId,
@@ -136,78 +134,6 @@ export default function ProductTable({
   const closeProductDrawer = () => {
     setSelectedProductId(null);
   };
-
-  /* =========================================================
-     LOADING
-  ========================================================== */
-
-  if (isLoading) {
-    return (
-      <div
-        className="
-          overflow-hidden
-          rounded-2xl
-          border
-          border-neutral-200
-          bg-white
-        "
-      >
-        <div
-          className="
-            flex
-            min-h-[360px]
-            items-center
-            justify-center
-          "
-        >
-          <div className="flex flex-col items-center">
-            <Loader2
-              className="
-                h-5
-                w-5
-                animate-spin
-                text-neutral-400
-              "
-            />
-
-            <p
-              className="
-                mt-3
-                text-xs
-                text-neutral-400
-              "
-            >
-              Loading products...
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  /* =========================================================
-     ERROR
-  ========================================================== */
-
-  if (error) {
-    return (
-      <div
-        className="
-          rounded-2xl
-          border
-          border-red-100
-          bg-red-50
-          px-5
-          py-6
-          text-center
-        "
-      >
-        <p className="text-xs font-medium text-red-600">
-          {getErrorMessage(error)}
-        </p>
-      </div>
-    );
-  }
 
   /* =========================================================
      EMPTY
@@ -370,7 +296,7 @@ export default function ProductTable({
                   >
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100">
+                        <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100">
                           {image ? (
                             <Image
                               src={image.url}
@@ -584,7 +510,7 @@ export default function ProductTable({
                 "
               >
                 <div className="flex gap-3">
-                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
+                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
                     {image ? (
                       <Image
                         src={image.url}

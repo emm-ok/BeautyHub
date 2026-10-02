@@ -42,6 +42,7 @@ import type {
   UpdateProductInput,
 } from "@/types/products";
 import Image from "next/image";
+import UpdateProductDrawerSkeleton from "./UpdateProductDrawerSkeleton";
 
 /* =========================================================
    OPTIONS
@@ -1293,15 +1294,7 @@ export default function UpdateProductDrawer({
           ====================================================== */}
 
           {productLoading || !form ? (
-            <div className="flex flex-1 items-center justify-center">
-              <div className="flex flex-col items-center">
-                <Loader2 className="h-5 w-5 animate-spin text-neutral-500" />
-
-                <p className="mt-3 text-xs text-neutral-400">
-                  Loading product...
-                </p>
-              </div>
-            </div>
+            <UpdateProductDrawerSkeleton />
           ) : productQuery.isError ? (
             <div className="flex flex-1 items-center justify-center px-6">
               <div className="max-w-sm text-center">

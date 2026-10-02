@@ -2,6 +2,7 @@
 
 import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
 
 import ProductKpiCards from "@/components/dashboard/products/ProductKpiCards";
 import ProductFilters from "@/components/dashboard/products/ProductFilters";
@@ -154,8 +155,22 @@ export default function AdminProductsPage() {
         {/* Table */}
         <div className="relative">
           {isFetching && !isLoading && (
-            <div className="absolute inset-x-0 top-0 z-10 h-0.5 overflow-hidden bg-neutral-100">
-              <div className="h-full w-1/3 animate-[shimmer_1.2s_infinite] bg-neutral-950" />
+            <div
+              className="absolute inset-x-0 top-0 z-10 h-[2px] overflow-hidden bg-neutral-100"
+              aria-label="Refreshing"
+              role="progressbar"
+            >
+              <motion.div
+                className="absolute inset-y-0 w-1/3 bg-neutral-950"
+                initial={{ x: "-100%" }}
+                animate={{ x: "400%" }}
+                transition={{
+                  duration: 1.15,
+                  ease: [0.4, 0, 0.2, 1],
+                  repeat: Infinity,
+                  repeatType: "loop",
+                }}
+              />
             </div>
           )}
 
