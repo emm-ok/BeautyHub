@@ -35,6 +35,7 @@ import type {
   SkinType,
 } from "@/types/products";
 import { uploadProductImage } from "@/services/product-image";
+import Image from "next/image";
 
 /* Types                                                                      */
 
@@ -1238,7 +1239,7 @@ export default function AddProductDrawer({
                               className="group overflow-hidden rounded-xl border border-neutral-200 bg-white"
                             >
                               <div className="relative aspect-square overflow-hidden bg-neutral-100">
-                                <img
+                                <Image
                                   src={
                                     image.preview
                                   }
@@ -1248,6 +1249,7 @@ export default function AddProductDrawer({
                                     1
                                     }`
                                   }
+                                  fill
                                   className="h-full w-full object-cover"
                                 />
 

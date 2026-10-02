@@ -10,6 +10,7 @@ import {
   Layers3,
   Sparkles,
 } from "lucide-react";
+import Image from "next/image";
 
 const categories = [
   {
@@ -114,9 +115,10 @@ export default function FeaturedCategories() {
                       ease: [0.22, 1, 0.36, 1],
                     }}
                   >
-                    <img
+                    <Image
                       src={category.image}
                       alt=""
+                      fill
                       className="h-full w-full object-cover"
                     />
                   </motion.div>

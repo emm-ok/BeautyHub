@@ -10,6 +10,7 @@ import {
 import { motion } from "framer-motion";
 
 import { useProducts } from "@/hooks/useProducts";
+import Image from "next/image";
 
 function formatPrice(
   value: string | number
@@ -128,7 +129,7 @@ export default function FeaturedProducts() {
                       >
                         <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-neutral-100">
                           {image ? (
-                            <img
+                            <Image
                               src={
                                 image.url
                               }
@@ -136,6 +137,7 @@ export default function FeaturedProducts() {
                                 image.altText ??
                                 product.name
                               }
+                              fill
                               className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]"
                             />
                           ) : (

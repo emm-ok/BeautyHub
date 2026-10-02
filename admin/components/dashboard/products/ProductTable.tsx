@@ -12,6 +12,7 @@ import type { AdminProduct } from "@/types/products";
 import UpdateProductDrawer from "./UpdateProductDrawer";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 
 interface ProductTableProps {
   products: AdminProduct[];
@@ -371,12 +372,13 @@ export default function ProductTable({
                       <div className="flex items-center gap-3">
                         <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100">
                           {image ? (
-                            <img
+                            <Image
                               src={image.url}
                               alt={
                                 image.altText ??
                                 product.name
                               }
+                              fill
                               className="h-full w-full object-cover"
                             />
                           ) : (
@@ -584,12 +586,13 @@ export default function ProductTable({
                 <div className="flex gap-3">
                   <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
                     {image ? (
-                      <img
+                      <Image
                         src={image.url}
                         alt={
                           image.altText ??
                           product.name
                         }
+                        fill
                         className="h-full w-full object-cover"
                       />
                     ) : (

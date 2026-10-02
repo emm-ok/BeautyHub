@@ -41,6 +41,7 @@ import type {
   SkinType,
   UpdateProductInput,
 } from "@/types/products";
+import Image from "next/image";
 
 /* =========================================================
    OPTIONS
@@ -1589,7 +1590,7 @@ export default function UpdateProductDrawer({
                                 "
                               >
                                 <div className="relative aspect-square overflow-hidden bg-neutral-100">
-                                  <img
+                                  <Image
                                     src={
                                       image.url
                                     }
@@ -1597,6 +1598,7 @@ export default function UpdateProductDrawer({
                                       image.altText ??
                                       product?.name
                                     }
+                                    fill
                                     className="
                                       h-full
                                       w-full
@@ -1874,7 +1876,7 @@ export default function UpdateProductDrawer({
                               >
                                 <div className="flex gap-3 p-3">
                                   <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
-                                    <img
+                                    <Image
                                       src={
                                         image.preview
                                       }
@@ -1882,6 +1884,7 @@ export default function UpdateProductDrawer({
                                         image.altText ||
                                         image.file.name
                                       }
+                                      fill
                                       className="h-full w-full object-cover"
                                     />
 
