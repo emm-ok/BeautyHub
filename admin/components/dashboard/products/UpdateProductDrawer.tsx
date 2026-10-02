@@ -343,8 +343,6 @@ export default function UpdateProductDrawer({
     productId ?? "",
   );
 
-  console.log("ProductQuery", productQuery.data);   
-
   const imagesQuery = useProductImages(
     productId ?? "",
   );
@@ -369,7 +367,6 @@ export default function UpdateProductDrawer({
   const product = getProductData(
     productQuery.data?.data as unknown as Product | undefined,
   );
-  console.log("Product", product);
 
   const existingImages =
     imagesQuery.data ?? [];
