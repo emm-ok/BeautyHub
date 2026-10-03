@@ -385,10 +385,6 @@ model Order {
 
   whatsappPhone String?
 
-  // Delivery
-
-  deliveryId String?
-
   // Timestamps
 
   paidAt       DateTime?

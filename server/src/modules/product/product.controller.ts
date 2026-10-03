@@ -18,7 +18,6 @@ import {
   getRelatedProducts,
   getActiveCategories
 } from "./product.service.js";
-import { errorMonitor } from "node:events";
 
 export async function createProductController(
   req: Request,
@@ -97,12 +96,10 @@ export async function getProductController(
   res: Response
 ) {
   try {
-    console.log("Fetching product with ID:", req.params.id);
     const product = await getProductById(
       req.params.id as string
     );
 
-    console.log("Fetched product:", product);
     return res.status(200).json({
       success: true,
       data: product,
