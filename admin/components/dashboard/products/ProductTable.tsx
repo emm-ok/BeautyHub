@@ -264,78 +264,78 @@ export default function ProductTable({
 
             <tbody className="divide-y divide-neutral-100">
               <AnimatePresence initial={false}>
-              {products.map((product) => {
-                const image =
-                  product.images?.[0];
+                {products.map((product) => {
+                  const image =
+                    product.images?.[0];
 
-                return (
-                  <motion.tr
-                    key={product.id}
-                    layout
-                    initial={{
-                      opacity: 0,
-                    }}
-                    animate={{
-                      opacity: 1,
-                    }}
-                    exit={{
-                      opacity: 0,
-                    }}
-                    onClick={() =>
-                      openProductDrawer(
-                        product.id,
-                      )
-                    }
-                    className="
+                  return (
+                    <motion.tr
+                      key={product.id}
+                      layout
+                      initial={{
+                        opacity: 0,
+                      }}
+                      animate={{
+                        opacity: 1,
+                      }}
+                      exit={{
+                        opacity: 0,
+                      }}
+                      onClick={() =>
+                        openProductDrawer(
+                          product.id,
+                        )
+                      }
+                      className="
                       group
                       cursor-pointer
                       bg-white
                       transition-colors
                       hover:bg-neutral-50/80
                     "
-                  >
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100">
-                          {image ? (
-                            <Image
-                              src={image.url}
-                              alt={
-                                image.altText ??
-                                product.name
-                              }
-                              fill
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <div className="flex h-full w-full items-center justify-center text-neutral-300">
-                              <PackageOpen className="h-4 w-4" />
-                            </div>
-                          )}
-                        </div>
+                    >
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100">
+                            {image ? (
+                              <Image
+                                src={image.url}
+                                alt={
+                                  image.altText ??
+                                  product.name
+                                }
+                                fill
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center text-neutral-300">
+                                <PackageOpen className="h-4 w-4" />
+                              </div>
+                            )}
+                          </div>
 
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p
-                              className="
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <p
+                                className="
                                 max-w-[260px]
                                 truncate
                                 text-xs
                                 font-semibold
                                 text-neutral-900
                               "
-                            >
-                              {product.name}
-                            </p>
+                              >
+                                {product.name}
+                              </p>
 
-                            {product.discountType !==
-                              "NONE" &&
-                              Number(
-                                product.discountValue ??
-                                0,
-                              ) > 0 && (
-                                <span
-                                  className="
+                              {product.discountType !==
+                                "NONE" &&
+                                Number(
+                                  product.discountValue ??
+                                  0,
+                                ) > 0 && (
+                                  <span
+                                    className="
                                     rounded-md
                                     bg-neutral-100
                                     px-1.5
@@ -344,106 +344,106 @@ export default function ProductTable({
                                     font-semibold
                                     text-neutral-500
                                   "
-                                >
-                                  Sale
-                                </span>
-                              )}
-                          </div>
+                                  >
+                                    Sale
+                                  </span>
+                                )}
+                            </div>
 
-                          <p
-                            className="
+                            <p
+                              className="
                               mt-1
                               truncate
                               text-[10px]
                               text-neutral-400
                             "
-                          >
-                            {product.brand ??
-                              "BeautyHub catalogue"}
-                          </p>
+                            >
+                              {product.brand ??
+                                "BeautyHub catalogue"}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    <td className="px-5 py-4 text-sm text-neutral-600">
-                      {product.category.name ?? "—"}
-                    </td>
+                      <td className="px-5 py-4 text-sm text-neutral-600">
+                        {product.category.name ?? "—"}
+                      </td>
 
-                    <td className="px-4 py-4">
-                      <div>
-                        <p
-                          className="
+                      <td className="px-4 py-4">
+                        <div>
+                          <p
+                            className="
                             text-xs
                             font-semibold
                             text-neutral-900
                           "
-                        >
-                          {formatPrice(
-                            product.salePrice,
-                          )}
-                        </p>
+                          >
+                            {formatPrice(
+                              product.salePrice,
+                            )}
+                          </p>
 
-                        {Number(
-                          product.price,
-                        ) >
-                          Number(
-                            product.salePrice,
-                          ) && (
-                            <p
-                              className="
+                          {Number(
+                            product.price,
+                          ) >
+                            Number(
+                              product.salePrice,
+                            ) && (
+                              <p
+                                className="
                               mt-0.5
                               text-[10px]
                               text-neutral-400
                               line-through
                             "
-                            >
-                              {formatPrice(
-                                product.price,
-                              )}
-                            </p>
-                          )}
-                      </div>
-                    </td>
+                              >
+                                {formatPrice(
+                                  product.price,
+                                )}
+                              </p>
+                            )}
+                        </div>
+                      </td>
 
-                    <td className="px-5 py-4">
-                      <span
-                        className={
-                          product.stockQuantity ===
-                            0
-                            ? "text-sm font-semibold text-red-600"
-                            : product.stockQuantity <=
-                              product.lowStockThreshold
-                              ? "text-sm font-semibold text-amber-600"
-                              : "text-sm text-neutral-700"
-                        }
-                      >
-                        {product.stockQuantity}
-                      </span>
-                    </td>
+                      <td className="px-5 py-4">
+                        <span
+                          className={
+                            product.stockQuantity ===
+                              0
+                              ? "text-sm font-semibold text-red-600"
+                              : product.stockQuantity <=
+                                product.lowStockThreshold
+                                ? "text-sm font-semibold text-amber-600"
+                                : "text-sm text-neutral-700"
+                          }
+                        >
+                          {product.stockQuantity}
+                        </span>
+                      </td>
 
-                    <td className="px-5 py-4">
-                      <VerificationBadge
-                        verified={
-                          product.verificationStatus ===
-                          "VERIFIED"
-                        }
-                      />
-                    </td>
+                      <td className="px-5 py-4">
+                        <VerificationBadge
+                          verified={
+                            product.verificationStatus ===
+                            "VERIFIED"
+                          }
+                        />
+                      </td>
 
-                    <td className="px-5 py-4">
-                      <StatusBadge
-                        status={product.status}
-                      />
-                    </td>
+                      <td className="px-5 py-4">
+                        <StatusBadge
+                          status={product.status}
+                        />
+                      </td>
 
-                    <td className="px-4 py-4">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDelete(product);
-                        }}
-                        className="
+                      <td className="px-4 py-4">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(product);
+                          }}
+                          className="
                           flex
                           h-8
                           w-8
@@ -455,14 +455,14 @@ export default function ProductTable({
                           hover:bg-neutral-100
                           hover:text-neutral-900
                         "
-                        aria-label={`Actions for ${product.name}`}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </td>
-                  </motion.tr>
-                );
-              })}
+                          aria-label={`Actions for ${product.name}`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </td>
+                    </motion.tr>
+                  );
+                })}
               </AnimatePresence>
             </tbody>
           </table>
@@ -545,9 +545,33 @@ export default function ProductTable({
                         </p>
                       </div>
 
-                      <ChevronRight
-                        className="mt-0.5 h-4 w-4 shrink-0 text-neutral-300 transition group-hover:text-neutral-700"
-                      />
+                      <div className="flex items-center gap-2">
+                        <ChevronRight
+                          className="mt-0.5 h-4 w-4 shrink-0 text-neutral-300 transition group-hover:text-neutral-700"
+                        />
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(product);
+                          }}
+                          className="
+                          flex
+                          h-8
+                          w-8
+                          items-center
+                          justify-center
+                          rounded-lg
+                          text-neutral-400
+                          transition
+                          hover:bg-neutral-100
+                          hover:text-neutral-900
+                        "
+                          aria-label={`Actions for ${product.name}`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
 
                     <div className="mt-3 flex flex-wrap items-center gap-2">

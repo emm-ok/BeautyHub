@@ -638,8 +638,7 @@ export default function AddProductDrawer({
     if (
       form.discountType ===
       "FIXED_AMOUNT" &&
-      form.discountValue !==
-      undefined &&
+      form.discountValue != null &&
       form.discountValue >= form.price
     ) {
       nextErrors.discountValue =
@@ -837,12 +836,31 @@ export default function AddProductDrawer({
 
       onClose();
     } catch {
+      console.log("Submit Error", createProduct);
       /*
        * Product creation error is already exposed
        * through createProduct.isError.
        */
     }
   };
+  type ApiErrorWithResponse = {
+    response?: {
+      data?: {
+        errors?: unknown;
+      };
+    };
+  };
+
+  const errorMessages =
+    createProduct?.error &&
+      typeof createProduct.error === "object" &&
+      "response" in createProduct.error
+      ? (createProduct.error as ApiErrorWithResponse)
+        .response?.data?.errors
+      : undefined;
+
+  console.log("Error messages:", errorMessages);
+
 
   /* Render                                                                   */
 
@@ -1425,13 +1443,16 @@ export default function AddProductDrawer({
                         value={
                           form.discountType
                         }
-                        onChange={(event) =>
-                          updateField(
-                            "discountType",
-                            event.target
-                              .value as DiscountType,
-                          )
-                        }
+                        onChange={(event) => {
+                          const discountType =
+                            event.target.value as DiscountType;
+
+                          updateField("discountType", discountType);
+
+                          if (discountType === "NONE") {
+                            updateField("discountValue", null);
+                          }
+                        }}
                         className={inputClass}
                       >
                         <option value="NONE">
@@ -1545,7 +1566,7 @@ export default function AddProductDrawer({
                             calculatePreviewPrice(
                               form.price,
                               form.discountType,
-                              form.discountValue,
+                              form.discountValue ?? undefined,
                             ),
                           )}
                         </p>
@@ -1866,9 +1887,9 @@ export default function AddProductDrawer({
                           )
                         }
                         className={`relative h-6 w-11 shrink-0 rounded-full transition ${form.verificationStatus ===
-                            "VERIFIED"
-                            ? "bg-neutral-950"
-                            : "bg-neutral-200"
+                          "VERIFIED"
+                          ? "bg-neutral-950"
+                          : "bg-neutral-200"
                           }
                         `}
                         aria-label="Toggle product verification"
@@ -1938,10 +1959,27 @@ export default function AddProductDrawer({
                     <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
 
                     <span>
-                      {createProduct.error instanceof
-                        Error
-                        ? createProduct.error.message
-                        : "Unable to create product. Please try again."}
+                      {(() => {
+                        const fieldErrors = (
+                          createProduct.error as Error & {
+                            response?: {
+                              data?: {
+                                errors?: {
+                                  fieldErrors?: Record<string, string[]>;
+                                };
+                              };
+                            };
+                          }
+                        ).response?.data?.errors?.fieldErrors;
+
+                        return fieldErrors
+                          ? Object.values(fieldErrors)
+                            .flat()
+                            .map((message, index) => (
+                              <p key={index}>{message}</p>
+                            ))
+                          : null;
+                      })()}
                     </span>
                   </motion.div>
                 )}

@@ -194,7 +194,7 @@ export interface CreateProductInput {
 
   price: number;
   discountType: DiscountType;
-  discountValue?: number;
+  discountValue?: number | null;
 
   stockQuantity: number;
   lowStockThreshold?: number;
