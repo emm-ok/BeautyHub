@@ -186,10 +186,16 @@ export default function ProductPurchasePanel({
     );
   };
 
-  const errorMessage =
-    addCartMutation.error instanceof Error
-      ? addCartMutation.error.message
-      : null;
+  const mutationError = addCartMutation.error as (Error & {
+    response?: {
+      data?: {
+        message?: string;
+      };
+    };
+  }) | null;
+  const errorMessage = mutationError?.response?.data?.message;
+
+    console.log("addCartMutation",addCartMutation);
 
   return (
     <div className="rounded-[2rem] border border-neutral-200 bg-white p-6 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.25)] sm:p-8">
@@ -315,7 +321,7 @@ export default function ProductPurchasePanel({
             className="mt-4 overflow-hidden"
           >
             <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {errorMessage}
+              Failed to add item to cart
             </div>
           </motion.div>
         )}
