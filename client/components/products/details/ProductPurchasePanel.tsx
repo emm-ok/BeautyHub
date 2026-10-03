@@ -321,7 +321,7 @@ export default function ProductPurchasePanel({
             className="mt-4 overflow-hidden"
           >
             <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
-              Failed to add item to cart
+              {`Only ${product.stockQuantity} available in stock. Please reduce the quantity and try again.`}
             </div>
           </motion.div>
         )}
